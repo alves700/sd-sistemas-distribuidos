@@ -6,30 +6,29 @@ import java.io.*;
 
 public class Multicast extends Thread{
     
-    public MulticastSocket socket;
+    private MulticastSocket socket;
     public InetAddress group;
     public boolean isConnected;
-    private final String MCAdrress = "224.0.0.1";
+    private final String MCAdrress = "235.1.1.1";
     public ArrayList<String> inBuffer;
     
     public Multicast(){
     	inBuffer = new ArrayList<String>();
     }
     public void joinMulticast(){
-        socket =null;
         try {
             InetAddress group = InetAddress.getByName(MCAdrress);
-            socket = new MulticastSocket(6789);
-            socket.joinGroup(group);
+            setSocket(new MulticastSocket(6789));
+            getSocket().joinGroup(group);
             this.isConnected = true;
         }catch (SocketException e){System.out.println("Socket: " + e.getMessage());
         }catch (IOException e){System.out.println("IO: " + e.getMessage());
-        }finally {if(socket != null) socket.close();}
+        }finally {if(getSocket() != null) getSocket().close();}
     }
     public void leaveGroup() {
         try {
             this.isConnected = false;
-            socket.leaveGroup(group);
+            getSocket().leaveGroup(group);
             
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -40,7 +39,7 @@ public class Multicast extends Thread{
         byte [] m = msg.getBytes();
         DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
         try {
-            socket.send(messageOut);
+            getSocket().send(messageOut);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -52,12 +51,12 @@ public class Multicast extends Thread{
                 // get messages from others in group
                     DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
                     try {
-                        socket.receive(messageIn);
+                        getSocket().receive(messageIn);
+                        inBuffer.add(new String(messageIn.getData()));
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-        inBuffer.add(new String(messageIn.getData()));
   
     }
     public String getMsg(){
@@ -83,5 +82,11 @@ public class Multicast extends Thread{
             }
         }
     }
+	public MulticastSocket getSocket() {
+		return socket;
+	}
+	public void setSocket(MulticastSocket socket) {
+		this.socket = socket;
+	}
 }
 
