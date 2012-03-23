@@ -11,10 +11,15 @@ public class testeMulticast {
 		Multicast m = new Multicast();
 		m.joinMulticast();
 		m.start();
-		m.enviaMsg("asdjas");
+		m.enviaMsg("sdasd");
 		while(true){
 			
-			System.out.println("MSG:"+ m.getMsg());
+			String msg;
+			msg = m.getMsg();
+			if ( msg != null ){
+				System.out.println("MSG:"+ m.getMsg());
+				
+			}
 			
 			
 		}
