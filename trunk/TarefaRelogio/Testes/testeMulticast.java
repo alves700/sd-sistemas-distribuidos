@@ -11,17 +11,19 @@ public class testeMulticast {
 		Multicast m = new Multicast();
 		m.joinMulticast();
 		m.start();
-		m.enviaMsg("sdasd");
-		while(true){
-			
+		m.enviaMsg(new String("BuabU"));
+		while(true){	
 			String msg;
 			msg = m.getMsg();
 			if ( msg != null ){
 				System.out.println("MSG:"+ m.getMsg());
-				
 			}
-			
-			
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

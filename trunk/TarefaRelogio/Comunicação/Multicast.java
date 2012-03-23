@@ -17,9 +17,9 @@ public class Multicast extends Thread{
     }
     public void joinMulticast(){
         try {
-            InetAddress group = InetAddress.getByName("239.0.0.1");
-            setSocket(new MulticastSocket(6789));
-            getSocket().joinGroup(group);
+            group = InetAddress.getByName("224.0.0.1");
+            socket = new MulticastSocket(6780);
+            socket.joinGroup(group);
             this.isConnected = true;
         }catch (SocketException e){System.out.println("Socket: " + e.getMessage());
         }catch (IOException e){System.out.println("IO: " + e.getMessage());
@@ -37,29 +37,32 @@ public class Multicast extends Thread{
     }
     public void enviaMsg(String msg){
         byte [] m = msg.getBytes();
-        DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
+        DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6780);
         try {
-        	
-            getSocket().send(messageOut);
+			getSocket().send(messageOut);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }    
+        }  
     }
-    public void recebeMsg(){
+    public synchronized void recebeMsg(){
             
         byte[] buffer = new byte[1000];
                 // get messages from others in group
         DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
         try {
+        	
+        	Thread.sleep(50);
             getSocket().receive(messageIn);
-            if( messageIn != null){
-            	inBuffer.add(new String(messageIn.getData()));
-            }
+            inBuffer.add(new String(messageIn.getData()));
+            
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
+        } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
            
   
     }
