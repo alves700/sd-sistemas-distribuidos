@@ -16,7 +16,7 @@ public class testeMulticast {
 			String msg;
 			msg = m.getMsg();
 			if ( msg != null ){
-				System.out.println("MSG:"+ m.getMsg());
+				System.out.println("MSG:"+ msg);
 			}
 			try {
 				Thread.sleep(50);
