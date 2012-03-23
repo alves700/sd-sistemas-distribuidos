@@ -3,22 +3,28 @@ package Comunicação;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
+
+//Classe Unicast UDP
 public class Unicast implements Runnable {
 	
-	private Socket s;
-	private final int serverPort = 7896; 
-	private DataInputStream in;
-	private DataOutputStream out;
+	private final int serverPort = 7896;
 	
-	private String mensagem;
+	private DatagramSocket aSocket;
+	InetAddress address = null;;
+	 
+	byte[] buffer = new byte[1000];
 	private boolean status = false;
 	
 	public void envia(byte [] message) throws IOException{
-		out = new DataOutputStream(s.getOutputStream());
-		out.write(message);
+		DatagramPacket pacote = new DatagramPacket(message, message.length, address, serverPort);
+		aSocket.send(pacote);
+		
 	}
 	@Override
 	public void run(){
@@ -31,24 +37,28 @@ public class Unicast implements Runnable {
 				e1.printStackTrace();
 			}
 			if(status){
+				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 				try {
-					in = new DataInputStream(s.getInputStream());
-					mensagem = in.readUTF();
+					aSocket.receive(reply);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				buffer = reply.getData();
 			}
 		}
 	}
-	public String getMessage(){
-		return mensagem;
+	public byte[] getMessage(){
+		return buffer;
 	}
 	public void fechaSocket() throws IOException{
-		s.close();
+		aSocket.close();
 	}
-	public void configuraSocket (InetAddress address) throws IOException{
-		s = new Socket (address,serverPort);
+	public void setAddress(String ip) throws UnknownHostException{
+		address = InetAddress.getByName(ip);
+	}
+	public void configuraSocket () throws IOException{
+		aSocket = new DatagramSocket();
 	}
 	public void setStatus(boolean status){
 		this.status = status;
