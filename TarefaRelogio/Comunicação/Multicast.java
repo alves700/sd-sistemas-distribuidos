@@ -9,7 +9,7 @@ public class Multicast extends Thread{
     private MulticastSocket socket;
     public InetAddress group;
     public boolean isConnected;
-    private final String MCAdrress = "235.1.1.1";
+    private final String MCAdrress = "224.0.0.1";
     public ArrayList<String> inBuffer;
     
     public Multicast(){
@@ -17,13 +17,13 @@ public class Multicast extends Thread{
     }
     public void joinMulticast(){
         try {
-            InetAddress group = InetAddress.getByName(MCAdrress);
+            InetAddress group = InetAddress.getByName("239.0.0.1");
             setSocket(new MulticastSocket(6789));
             getSocket().joinGroup(group);
             this.isConnected = true;
         }catch (SocketException e){System.out.println("Socket: " + e.getMessage());
         }catch (IOException e){System.out.println("IO: " + e.getMessage());
-        }finally {if(getSocket() != null) getSocket().close();}
+        }//finally {if(getSocket() != null) getSocket().close();}
     }
     public void leaveGroup() {
         try {
@@ -39,6 +39,7 @@ public class Multicast extends Thread{
         byte [] m = msg.getBytes();
         DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
         try {
+        	
             getSocket().send(messageOut);
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -49,14 +50,17 @@ public class Multicast extends Thread{
             
         byte[] buffer = new byte[1000];
                 // get messages from others in group
-                    DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-                    try {
-                        getSocket().receive(messageIn);
-                        inBuffer.add(new String(messageIn.getData()));
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+        DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+        try {
+            getSocket().receive(messageIn);
+            if( messageIn != null){
+            	inBuffer.add(new String(messageIn.getData()));
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+           
   
     }
     public String getMsg(){
