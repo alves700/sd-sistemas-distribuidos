@@ -12,13 +12,12 @@ public class testeMulticast {
 		m.joinMulticast();
 		m.start();
 		m.enviaMsg(new String("BuabU"));
-		m.enviaMsg(new String("BuabU2"));
 		
 		while(true){	
 			String msg;
 			msg = m.getMsg();
 			if ( msg != null ){
-				System.out.println("MSG:"+ msg);
+				System.out.println("MSG:"+ msg+" "+ new String(m.getEnderecoMsg()));
 			}
 			try {
 				Thread.sleep(50);

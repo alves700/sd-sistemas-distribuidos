@@ -17,7 +17,6 @@ public class testeUnicastServer {
 		
 		u.start();
 		u.setStatus(true);
-		
 		while(true){
 			String msg = u.getMsg();
 			if ( msg != null ){
