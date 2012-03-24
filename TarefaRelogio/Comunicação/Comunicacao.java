@@ -37,8 +37,9 @@ public class Comunicacao {
 	// tudo no mesmo PC, estou fazendo com q ele funcione somente em PC's diferentes. Testes realizados em 2 PC's diferentes.
 	public void reconheceOutrosProcessos(int ID){
 		long t1 = System.currentTimeMillis();
+		long t2 = System.currentTimeMillis();
 		mc.enviaMsg(""+ID);
-		while(t1 + tempoReconhecimento >= System.currentTimeMillis()){
+		while(t1 + tempoReconhecimento >= t2){
 			if ( mc.existeMsg()){
 				String msg = mc.getMsg();
 				int i = 0;
@@ -57,20 +58,24 @@ public class Comunicacao {
 						processoExistente = true;
 					}
 				}
-				//Se processo não existir na tabela de processos, adiciona-o na lista e envia sua ID para esse processo adicioná-lo.
+				//Se processo não existir na tabela de processos, adiciona-o na lista e envia sua ID para esse processo adicioná-lo, dá mais
+				//tempoDeReconhecimento para o término do reconhecimento entre processos
 				if(!processoExistente){
 					contatosIP.add(msg_ip);
 					contatosID.add(msg_id);
 					System.out.println(msg_ip +" "+ msg_id);
 					mc.enviaMsg(""+ID);
+					
+					t1 = System.currentTimeMillis();
 				}
 			}
 			try {
-				Thread.sleep(50);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			t2 = System.currentTimeMillis();
 		}
 	}
 	
