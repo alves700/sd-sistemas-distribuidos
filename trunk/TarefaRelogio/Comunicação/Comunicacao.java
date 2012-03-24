@@ -17,6 +17,7 @@ public class Comunicacao {
 	private Unicast uc;
 	private Multicast mc;
 	public Comunicacao(){
+		//Armazena seu próprio IP da rede.
 		try {
 			InetAddress address = InetAddress.getLocalHost();
 			meuIP = address.getHostAddress();
