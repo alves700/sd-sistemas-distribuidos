@@ -35,6 +35,9 @@ public class Processo extends Thread {
 			try {
 				
 				verficaBufferEntrada();
+				
+				
+				
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -57,9 +60,21 @@ public class Processo extends Thread {
 	public void processaMensagem(DatagramPacket dp){
 		
 		String msg[] = comm.getMulticast().getMsg(dp).split(" ");
-		
-		switch( msg[Comunicacao.INDEX_TIPO] ){
-		
+		 
+		switch( Integer.parseInt(msg[Comunicacao.INDEX_TIPO]) ){
+			case Comunicacao.HELLO:
+				break;
+			case Comunicacao.REQ_RELOGIO:
+				break;
+			case Comunicacao.RELOGIO:
+				break;
+			case Comunicacao.RECONHECIMENTO:
+				break;
+			case Comunicacao.ELEICAO:
+				break;
+			case Comunicacao.CALC_RTT_MAX:
+				break;
+			
 		}
 		
 	}
@@ -75,14 +90,14 @@ public class Processo extends Thread {
 		
 		long startTime = System.currentTimeMillis();
 		
-		mc.enviaMsg(""+ Comunicacao.TIPO_MSG.CALC_RTT_MAX +"rtt");
+		mc.enviaMsg(""+ Comunicacao.CALC_RTT_MAX +"rtt");
 		
 		while( System.currentTimeMillis() - startTime < maxTime){
 			if ( mc.existeMsg()){
 				
 				String msg[] =  mc.getMsg(mc.getDatagram()).split(" ");
 				//se o tipo da msg for de CALC_RTT_MAX
-				if ( msg[Comunicacao.INDEX_TIPO].equals(Comunicacao.TIPO_MSG.CALC_RTT_MAX)){
+				if ( msg[Comunicacao.INDEX_TIPO].equals(""+Comunicacao.CALC_RTT_MAX)){
 					
 					RTT[contRespostas] =(int)(System.currentTimeMillis() - startTime);
 					
