@@ -12,6 +12,8 @@ public class testeMulticast {
 		m.joinMulticast();
 		m.start();
 		m.enviaMsg(new String("BuabU"));
+		m.enviaMsg(new String("BuabU2"));
+		
 		while(true){	
 			String msg;
 			msg = m.getMsg();

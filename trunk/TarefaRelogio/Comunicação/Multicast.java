@@ -8,16 +8,19 @@ public class Multicast extends Thread{
     
     private MulticastSocket socket;
     public InetAddress group;
+    private DatagramPacket messageIn;
+    
     public boolean isConnected;
     private final String MCAdrress = "224.0.0.1";
     public ArrayList<String> inBuffer;
+	private final int tamByte = 1000;
     
     public Multicast(){
     	inBuffer = new ArrayList<String>();
     }
     public void joinMulticast(){
         try {
-            group = InetAddress.getByName("224.0.0.1");
+            group = InetAddress.getByName("239.1.1.1");
             socket = new MulticastSocket(6780);
             socket.joinGroup(group);
             this.isConnected = true;
@@ -49,12 +52,21 @@ public class Multicast extends Thread{
             
         byte[] buffer = new byte[1000];
                 // get messages from others in group
-        DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+        messageIn = new DatagramPacket(buffer, buffer.length);
         try {
         	
         	Thread.sleep(50);
             getSocket().receive(messageIn);
-            inBuffer.add(new String(messageIn.getData()));
+            int i =0;
+            for(;i<tamByte;i++ ){
+    			if(buffer[i]==0){
+    				break;
+    			}
+    		}
+            String m = new String(messageIn.getData());
+            m = m.substring(0, i);
+            inBuffer.add(m.substring(0, i));
+            
             
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -65,6 +77,10 @@ public class Multicast extends Thread{
 		}
            
   
+    }
+    // retorna o IP da mensagem que foi enviada.
+    public  byte [] getEnderecoMsg(){
+    	return messageIn.getAddress().getAddress();
     }
     public String getMsg(){
     	if ( existeMsg() ){
