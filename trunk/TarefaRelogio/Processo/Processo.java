@@ -18,6 +18,7 @@ public class Processo extends Thread {
 		ID = (int) (Math.random()*10);
 		modoMestre = false;
 		comm.reconheceOutrosProcessos(ID);
+		System.out.println("Termino da Eleição");
 		while(true){
 			try {
 				Thread.sleep(50);
