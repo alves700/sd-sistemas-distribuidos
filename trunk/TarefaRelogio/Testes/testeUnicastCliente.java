@@ -8,18 +8,15 @@ import Comunicação.Unicast;
 public class testeUnicastCliente {
 	public static void main(String args []){
 		Unicast u = new Unicast();
-		try {
-			u.configuraSocket();
-			u.setAddress("localhost");
-			u.setStatus(true);
-			
-			u.start();
-			
-			
-			String a = "oioi";
-			u.enviaMsg(a.getBytes());
-		} catch (UnknownHostException e1) {	e1.printStackTrace();}
-		catch (IOException e1) {e1.printStackTrace();}
+		u.configuraSocket();
+		u.setAddress("localhost");
+		u.setStatus(true);
+		
+		u.start();
+		
+		
+		String a = "oioi";
+		u.enviaMsg(a.getBytes());
 		
 		while(true){
 			String msg = u.getMsg();

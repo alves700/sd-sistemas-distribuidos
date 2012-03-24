@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 
@@ -16,7 +17,7 @@ public class Unicast extends Thread {
 	public final static int serverPort = 7896;
 	
 	private DatagramSocket aSocket;
-	InetAddress address = null;;
+	InetAddress address = null;
 	 
 	String bufferString = null;
 	private boolean status = false;
@@ -24,9 +25,14 @@ public class Unicast extends Thread {
 	private final int tamByte = 1000;
 	
 	// Dado um endereço configurado e uma porta envia a message para esse endereço e porta.
-	public void enviaMsg(byte [] message) throws IOException{
+	public void enviaMsg(byte [] message){
 		DatagramPacket pacote = new DatagramPacket(message, message.length, address, serverPort);
-		aSocket.send(pacote);
+		try {
+			aSocket.send(pacote);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	@Override
 	// Método de leitura. Dados que chegam são armazenados na variável bufferString.
@@ -67,19 +73,34 @@ public class Unicast extends Thread {
 		return bufferString2;
 		
 	}
-	public void fechaSocket() throws IOException{
+	public void fechaSocket() {
 		aSocket.close();
 	}
-	public void setAddress(String ip) throws UnknownHostException{
-		address = InetAddress.getByName(ip);
+	public void setAddress(String ip) {
+		try {
+			address = InetAddress.getByName(ip);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	//Instancia um novo aSocket. (utilizado pelo cliente)
-	public void configuraSocket () throws IOException{
-		aSocket = new DatagramSocket();
+	public void configuraSocket () {
+		try {
+			aSocket = new DatagramSocket();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	//Instancia um novo aSocket. (utilizado pelo server)
-	public void configuraSocket (int serverPort) throws IOException{
-		aSocket = new DatagramSocket(serverPort);
+	public void configuraSocket (int serverPort) {
+		try {
+			aSocket = new DatagramSocket(serverPort);
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	//Configura os status da conexão.
 	public void setStatus(boolean status){
