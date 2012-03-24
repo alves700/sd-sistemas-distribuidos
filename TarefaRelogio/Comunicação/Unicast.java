@@ -24,7 +24,7 @@ public class Unicast extends Thread {
 	
 	private final int tamByte = 1000;
 	
-	// Dado um endereço configurado e uma porta envia a message para esse endereço e porta.
+	// Dado um endereço configurado e uma porta envia a mensagem para esse endereço e porta.
 	public void enviaMsg(byte [] message){
 		DatagramPacket pacote = new DatagramPacket(message, message.length, address, serverPort);
 		try {
@@ -35,8 +35,6 @@ public class Unicast extends Thread {
 		}
 	}
 	@Override
-	// Método de leitura. Dados que chegam são armazenados na variável bufferString.
-	// O método receive é bloqueador, portanto não é necessário o uso de semáforos.
 	public void run(){
 		while(true){
 			if(status){
@@ -44,6 +42,8 @@ public class Unicast extends Thread {
 			}
 		}
 	}
+	// Método de leitura. Dados que chegam são armazenados na variável bufferString.
+	// O método receive é bloqueador, portanto não é necessário o uso de semáforos.
 	public void recebeMsg(){
 		byte [] buffer = new byte [tamByte];
 		DatagramPacket reply = new DatagramPacket(buffer, buffer.length);

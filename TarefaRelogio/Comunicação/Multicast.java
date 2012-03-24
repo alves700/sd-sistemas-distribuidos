@@ -48,6 +48,8 @@ public class Multicast extends Thread{
             e.printStackTrace();
         }  
     }
+    // As mensagens recebidas são armazenadas em uma string IP+Mensagem, não sei se a informação do IP seria necessária em todos
+    // os casos (quando o mestre requisita relógios por exemplo), mas poderíamos deixar assim, como se fosse um protocolo.
     public synchronized void recebeMsg(){
             
         byte[] buffer = new byte[1000];
