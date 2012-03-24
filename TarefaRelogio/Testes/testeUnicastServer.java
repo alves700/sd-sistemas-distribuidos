@@ -8,13 +8,7 @@ public class testeUnicastServer {
 	public static void main(String args []){
 		Unicast u = new Unicast();
 		
-		try {
-			u.configuraSocket(Unicast.serverPort);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+		u.configuraSocket(Unicast.serverPort);
 		u.start();
 		u.setStatus(true);
 		while(true){
