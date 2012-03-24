@@ -11,10 +11,10 @@ import java.util.TreeSet;
 public class Comunicacao {
 	
 	
-	private final static int INDEX_ID = 1;
-	private final static int INDEX_IP = 0;
-	private final static int INDEX_TIPO = 0;
-	public static enum TIPO_MSG{ HELLO, REQ_RELOGIO, RELOGIO, RECONHECIMENTO, ELEICAO}
+	public final static int INDEX_ID = 1;
+	public final static int INDEX_IP = 0;
+	public final static int INDEX_TIPO = 0;
+	public static enum TIPO_MSG{ HELLO, REQ_RELOGIO, RELOGIO, RECONHECIMENTO, ELEICAO, CALC_RTT_MAX}
 		
 	
 	private ArrayList<String[]> contatos;
