@@ -1,5 +1,7 @@
 package Testes;
 
+import java.net.DatagramPacket;
+
 import Comunicação.Multicast;
 
 public class testeMulticast {
@@ -15,7 +17,9 @@ public class testeMulticast {
 		
 		while(true){	
 			String msg;
-			msg = m.getMsg();
+			DatagramPacket dp = m.getDatagram();
+			
+			msg = m.getMsg(dp);
 			if ( msg != null ){
 				System.out.println("MSG:"+ msg);
 			}

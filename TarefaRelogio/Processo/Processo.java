@@ -6,7 +6,7 @@ public class Processo extends Thread {
 	
 	Comunicacao comm = new Comunicacao();
 	
-	private boolean modoMestre;
+	private int idMestre;
 	private int ID;
 	
 	public static void main(String [] args){
@@ -16,9 +16,16 @@ public class Processo extends Thread {
 	
 	public void run(){
 		ID = (int) (Math.random()*10);
-		modoMestre = false;
+		idMestre = 10;
 		comm.reconheceOutrosProcessos(ID);
 		System.out.println("Termino do Reconhecimento");
+		
+		
+	 	for ( String i[] : comm.getContatos()){
+	   		System.out.println("ip: "+ i[0] + "  id: "+ i[1]);
+	   	}
+	 	
+	 	
 		while(true){
 			try {
 				Thread.sleep(50);
