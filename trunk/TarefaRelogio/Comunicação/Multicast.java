@@ -16,7 +16,7 @@ public class Multicast extends Thread{
 	private int port;
     
     public Multicast(){
-    	this.port = 6000;
+    	this.port = 5900;
     	inBuffer = new ArrayList<DatagramPacket>();
     }
     public void joinMulticast(){
@@ -91,7 +91,15 @@ public class Multicast extends Thread{
     }
     public String getMsg(DatagramPacket dp){
     	if ( dp != null ){
-    		return new String(dp.getData());
+    		byte [] m = dp.getData();
+    		int i = 0;
+    		for(; i<dp.getLength();i++){
+    			if(m[i] == 0){
+    				break;
+    			}
+    		}
+    		String msg = new String(dp.getData());
+    		return msg.substring(0,i);
     	}
     	else
     		return null;
