@@ -25,7 +25,7 @@ public class Comunicacao {
 			String msg = mc.getMsg();
 			if ( msg != null ){
 				contatosID.add(msg);
-				contatosIP.add(mc.getEnderecoMsg());
+				//contatosIP.add(mc.getEnderecoMsg());
 			}
 			try {
 				Thread.sleep(50);
