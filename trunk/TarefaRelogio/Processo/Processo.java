@@ -25,7 +25,6 @@ public class Processo extends Thread {
 	   		System.out.println("ip: "+ i[0] + "  id: "+ i[1]);
 	   	}
 	 	
-	 	
 		while(true){
 			try {
 				Thread.sleep(50);
