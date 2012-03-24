@@ -14,8 +14,14 @@ public class Comunicacao {
 	public final static int INDEX_ID = 1;
 	public final static int INDEX_IP = 0;
 	public final static int INDEX_TIPO = 0;
-	public static enum TIPO_MSG{ HELLO, REQ_RELOGIO, RELOGIO, RECONHECIMENTO, ELEICAO, CALC_RTT_MAX}
-		
+	
+	public final static int HELLO = 0;
+	public final static int	REQ_RELOGIO = 1;
+	public final static int	RELOGIO = 2;
+	public final static int	RECONHECIMENTO = 3;
+	public final static int	ELEICAO = 4;
+	public final static int	CALC_RTT_MAX = 5;
+
 	
 	private ArrayList<String[]> contatos;
 	
@@ -53,7 +59,7 @@ public class Comunicacao {
 	public void reconheceOutrosProcessos(int ID){
 		long t1 = System.currentTimeMillis();
 		long t2 = System.currentTimeMillis();
-		mc.enviaMsg(""+ TIPO_MSG.RECONHECIMENTO +" "+ ID);
+		mc.enviaMsg(""+ RECONHECIMENTO +" "+ ID);
 		while(t1 + tempoReconhecimento >= t2){
 			if ( mc.existeMsg()){
 				
@@ -62,7 +68,7 @@ public class Comunicacao {
 				
 				String[] contato = msg.split(" ");
 				
-				if ( !contato[0].equals(""+TIPO_MSG.RECONHECIMENTO)) //se naum for msg de reconhecimento
+				if ( !contato[0].equals(""+ RECONHECIMENTO)) //se naum for msg de reconhecimento
 					continue;//vai para a proxima iteração
 				
 				contato[INDEX_IP] = mc.getIP(dp); // coloca o IP no primeiro index do array
@@ -81,7 +87,7 @@ public class Comunicacao {
                if ( !processoExistente ){
 					contatos.add(contato);
 					System.out.println(contato[INDEX_IP] + " "+ contato[INDEX_ID]);
-					mc.enviaMsg(""+ TIPO_MSG.RECONHECIMENTO +" "+ID);
+					mc.enviaMsg(""+ RECONHECIMENTO +" "+ID);
 					t1 = System.currentTimeMillis();
 				}
 				
