@@ -10,9 +10,8 @@ public class Comunicacao {
 	
 	private ArrayList<String> contatosIP = new ArrayList();
 	private ArrayList<String> contatosID = new ArrayList();
-	
 	private String meuIP;
-	
+	// Duracao de reconhecimento de PC's = 10s
 	private final long tempoReconhecimento = 10000;
 	
 	private Unicast uc;
@@ -34,15 +33,13 @@ public class Comunicacao {
 		uc = new Unicast();
 	}
 	// Método iniciado pelo Processo para reconhecer os processos vizinhos, não sei como fazer esse método para funcionar
-	// tudo no mesmo PC, estou fazendo com q ele funcione somente em PC's diferentes.
-	
+	// tudo no mesmo PC, estou fazendo com q ele funcione somente em PC's diferentes. Testes realizados em 2 PC's diferentes.
 	public void reconheceOutrosProcessos(int ID){
 		long t1 = System.currentTimeMillis();
 		mc.enviaMsg(""+ID);
 		while(t1 + tempoReconhecimento >= System.currentTimeMillis()){
-			
-			String msg = mc.getMsg();
-			if ( msg != null ){
+			if ( mc.existeMsg()){
+				String msg = mc.getMsg();
 				int i = 0;
 				for(;i <msg.length();i++){
 					if(msg.charAt(i) == ' '){
@@ -53,13 +50,13 @@ public class Comunicacao {
 				String msg_id = msg.substring(i+1);
 				
 				boolean processoExistente = false;
-				
+				// Verifica se o IP ja existe na sua lista de contatos.
 				for(i = 0 ; i<contatosIP.size(); i++){
-					if(msg_ip.equals(contatosIP.get(i)) && msg_id.equals(contatosID.get(i))){
+					if(msg_ip.equals(contatosIP.get(i))){
 						processoExistente = true;
 					}
 				}
-				//Se processo não existir na tabela de processos, adiciona-o na lista e envia sua ID para esse processo.
+				//Se processo não existir na tabela de processos, adiciona-o na lista e envia sua ID para esse processo adicioná-lo.
 				if(!processoExistente){
 					contatosIP.add(msg_ip);
 					contatosID.add(msg_id);
