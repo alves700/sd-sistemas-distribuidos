@@ -6,13 +6,13 @@ import Comunicação.Unicast;
 
 public class testeUnicastServer {
 	public static void main(String args []){
-		Unicast u = new Unicast();
+		Unicast u = new Unicast(23);
 		
 		u.configuraSocket(Unicast.serverPort);
 		u.start();
 		u.setStatus(true);
 		while(true){
-			String msg = u.getMsg();
+			String msg = u.getMsg(u.getDatagram());
 			if ( msg != null ){
 				System.out.println("MSG:"+ msg);
 			}

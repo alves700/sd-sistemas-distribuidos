@@ -8,25 +8,26 @@ public class Multicast extends Thread{
     
     private MulticastSocket socket;
     public InetAddress group;
-    private DatagramPacket messageInBuffer;
     
     public boolean isConnected;
-    private final String MCAdrress = "224.0.0.1";
-    public ArrayList<String> inBuffer;
+    private final String MCAdrress = "239.0.0.1";
+    public ArrayList<DatagramPacket> inBuffer;
 	private final int tamByte = 1000;
+	private int port;
     
     public Multicast(){
-    	inBuffer = new ArrayList<String>();
+    	this.port = 6000;
+    	inBuffer = new ArrayList<DatagramPacket>();
     }
     public void joinMulticast(){
         try {
-            group = InetAddress.getByName("239.1.1.1");
-            socket = new MulticastSocket(6780);
+            group = InetAddress.getByName(MCAdrress);
+            socket = new MulticastSocket(port);
             socket.joinGroup(group);
             this.isConnected = true;
         }catch (SocketException e){System.out.println("Socket: " + e.getMessage());
         }catch (IOException e){System.out.println("IO: " + e.getMessage());
-        }//finally {if(getSocket() != null) getSocket().close();}
+        }
     }
     public void leaveGroup() {
         try {
@@ -36,11 +37,11 @@ public class Multicast extends Thread{
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
+        }finally {if(getSocket() != null) getSocket().close();}
     }
     public void enviaMsg(String msg){
         byte [] m = msg.getBytes();
-        DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6780);
+        DatagramPacket messageOut = new DatagramPacket(m, m.length, group, port);
         try {
 			getSocket().send(messageOut);
         } catch (IOException e) {
@@ -57,21 +58,10 @@ public class Multicast extends Thread{
         DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
         try {
         	
-        	Thread.sleep(50);
+        	Thread.sleep(10);
             getSocket().receive(messageIn);
-            int i =0;
-            for(;i<tamByte;i++ ){
-    			if(buffer[i]==0){
-    				break;
-    			}
-    		}
-            
-            String m = new String(messageIn.getData());
-            m = m.substring(0, i);
-           	m = messageIn.getAddress().getHostAddress()+" "+m;
-           	
-            inBuffer.add(m);
-            
+     
+            inBuffer.add(messageIn);
             
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -83,11 +73,25 @@ public class Multicast extends Thread{
            
   
     }
-    public String getMsg(){
+    public DatagramPacket getDatagram(){
     	if ( existeMsg() ){
-	    	String msg = inBuffer.get(0);
+    		DatagramPacket dp = inBuffer.get(0);
 	    	inBuffer.remove(0);
-	    	return msg;
+	    	return dp;
+    	}
+    	else{
+    		return null;
+    	}
+    }
+    public String getIP(DatagramPacket dp){
+    	if (dp != null)
+    		return dp.getAddress().getHostAddress();
+    	else
+    		return null;
+    }
+    public String getMsg(DatagramPacket dp){
+    	if ( dp != null ){
+    		return new String(dp.getData());
     	}
     	else
     		return null;

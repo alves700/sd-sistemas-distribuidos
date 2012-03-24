@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 
 //Classe Unicast UDP
@@ -16,17 +17,27 @@ public class Unicast extends Thread {
 	
 	public final static int serverPort = 7896;
 	
+	public final static int basePort = 5000;
+	
+	public ArrayList<DatagramPacket> inBuffer;
 	private DatagramSocket aSocket;
 	InetAddress address = null;
-	 
-	String bufferString = null;
 	private boolean status = false;
 	
 	private final int tamByte = 1000;
 	
+	private int port;
+	
+	public Unicast(int id){
+		port = basePort + id;
+		inBuffer = new ArrayList<DatagramPacket>();
+	}
 	// Dado um endereço configurado e uma porta envia a mensagem para esse endereço e porta.
-	public void enviaMsg(byte [] message){
-		DatagramPacket pacote = new DatagramPacket(message, message.length, address, serverPort);
+	public void enviaMsg(byte [] message, String ip, int port){
+		
+		setAddress(ip);
+		
+		DatagramPacket pacote = new DatagramPacket(message, message.length, address, port);
 		try {
 			aSocket.send(pacote);
 		} catch (IOException e) {
@@ -55,27 +66,46 @@ public class Unicast extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		int i =0;
-		for(;i<tamByte;i++ ){
-			if(buffer[i]==0){
-				break;
-			}
-		}
-		bufferString = new String(reply.getData());
-		bufferString = bufferString.substring(0,i);
+		
+		inBuffer.add(reply);
 	}
 	
 	// Retorna a mensagem armazenada no bufferString, logo após limpa esse buffer.
-	public String getMsg(){
-		
-		String bufferString2 = bufferString;
-		bufferString = null;
-		return bufferString2;
-		
-	}
+	public DatagramPacket getDatagram(){
+    	if ( existeMsg() ){
+    		DatagramPacket dp = inBuffer.get(0);
+	    	inBuffer.remove(0);
+	    	return dp;
+    	}
+    	else{
+    		return null;
+    	}
+    }
+    public String getIP(DatagramPacket dp){
+    	if (dp != null)
+    		return dp.getAddress().getHostAddress();
+    	else
+    		return null;
+    }
+    public String getMsg(DatagramPacket dp){
+    	if ( dp != null ){
+    		return new String(dp.getData());
+    	}
+    	else
+    		return null;
+    }
+	
+	public boolean existeMsg(){
+    	if ( inBuffer.size() == 0)
+    		return false;
+    	else 
+    		return true;
+    }
+	
 	public void fechaSocket() {
 		aSocket.close();
 	}
+	
 	public void setAddress(String ip) {
 		try {
 			address = InetAddress.getByName(ip);
@@ -87,7 +117,7 @@ public class Unicast extends Thread {
 	//Instancia um novo aSocket. (utilizado pelo cliente)
 	public void configuraSocket () {
 		try {
-			aSocket = new DatagramSocket();
+			aSocket = new DatagramSocket(port);
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
