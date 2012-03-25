@@ -34,7 +34,7 @@ public class Comunicacao {
 	private Multicast mc;
 	
 	
-	public Comunicacao(){
+	public Comunicacao(int id){
 		
 		contatos = new ArrayList<String[]>();
 		
@@ -52,14 +52,15 @@ public class Comunicacao {
 		mc.start();
 		
 		// O uc pode ser configurado somente quando for necessário enviar ou receber mensagens.
-		//uc = new Unicast();
+		uc = new Unicast(id);
 	}
 	// Método iniciado pelo Processo para reconhecer os processos vizinhos, não sei como fazer esse método para funcionar
 	// tudo no mesmo PC, estou fazendo com q ele funcione somente em PC's diferentes. Testes realizados em 2 PC's diferentes.
 	public void reconheceOutrosProcessos(int ID){
 		long t1 = System.currentTimeMillis();
 		long t2 = System.currentTimeMillis();
-		mc.enviaMsg(""+ RECONHECIMENTO +" "+ ID);
+		
+		mc.enviaMsg(protMsg(RECONHECIMENTO,ID));
 		while(t1 + tempoReconhecimento >= t2){
 			if ( mc.existeMsg()){
 				
@@ -87,7 +88,7 @@ public class Comunicacao {
                if ( !processoExistente ){
 					contatos.add(contato);
 					System.out.println(contato[INDEX_IP] + " "+ contato[INDEX_ID]);
-					mc.enviaMsg(""+ RECONHECIMENTO +" "+ID);
+					mc.enviaMsg(protMsg(RECONHECIMENTO,ID));
 					t1 = System.currentTimeMillis();
 				}
 				
@@ -102,6 +103,12 @@ public class Comunicacao {
 			t2 = System.currentTimeMillis();
 		}
 	}
+	public String protMsg(int tipo, String msg){
+		return ""+tipo+" "+msg;
+	}
+	public String protMsg(int tipo, int ID){
+		return ""+tipo+" "+ID;
+	}
 	
 	public Unicast getUnicast(){
 		return uc;
@@ -112,8 +119,5 @@ public class Comunicacao {
 	public ArrayList<String[]> getContatos() {
 		return contatos;
 	}
-	
 
-
-	
 }
