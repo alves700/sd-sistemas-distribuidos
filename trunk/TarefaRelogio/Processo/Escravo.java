@@ -36,11 +36,12 @@ public class Escravo extends Processo implements Runnable {
 			if(eleicaoOcorrendo && System.currentTimeMillis() > tempoInicioEleicao + tempoEleicao){
 				eleicaoOcorrendo = false;
 				idMestre = idNovoMestre;
+				idNovoMestre = -1;
 				tempoInicioEleicao = Long.MIN_VALUE;
 				
-				System.out.println("NovoMestre ID" + idMestre);
+				System.out.println("NovoMestre ID " + idMestre);
 				
-				if(idNovoMestre == ID){
+				if(idMestre == ID){
 					
 					Mestre m = new Mestre();
 			 		Thread t = new Thread(m);
@@ -52,6 +53,7 @@ public class Escravo extends Processo implements Runnable {
 						e.printStackTrace();
 					}
 				}
+				iniciaVariaveis();
 			}
 			else if(System.currentTimeMillis() > ultimoHelloRecebido + tempoEsperaHello){
 				eleicao();
