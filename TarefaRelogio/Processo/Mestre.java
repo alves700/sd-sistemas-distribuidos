@@ -6,14 +6,16 @@ import java.net.DatagramPacket;
 import Comunicação.Comunicacao;
 
 public class Mestre extends Processo{
-	public Mestre() throws IOException {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	
 	//Variáveis do mestre.
 	private final long tempoEnvioHello = 1000;
 	private long ultimoHelloEnviado;
 	
+	private int meuID;
+	
+	public Mestre(int ID) throws IOException {
+		meuID = ID;
+	}
 	
 	public void iniciaVariaveis(){
 		ultimoHelloEnviado = System.currentTimeMillis();
