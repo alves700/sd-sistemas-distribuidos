@@ -4,118 +4,60 @@ import java.net.DatagramPacket;
 
 import Comunicação.*;
 
-public class Processo extends Thread {
+public class Processo{
 	
-	Comunicacao comm = new Comunicacao();
+	protected Comunicacao comm;;
+	protected Multicast mc;
+	protected Unicast uc;
 	
-	private int RTTmax;
-	private int idMestre;
-	private int ID;
+	protected int idMestre = -1;
+	protected int idNovoMestre = -1;
+	protected int ID;
 	
+	public Processo(){
+		comm = new Comunicacao(ID);
+		mc = comm.getMulticast();
+		uc = comm.getUnicast();
+	}
 	public static void main(String [] args){
 		Processo p = new Processo();
-		p.start();
+		p.iniciaProcesso();
 	}
-	public Processo(){
-		ID = (int) (Math.random()*10);
-		idMestre = 10;
-	}
-	public void run(){
-		
-		configuraSockets();
+	public void iniciaProcesso(){
+		ID = (int) (Math.random()*40000)+1;
 		comm.reconheceOutrosProcessos(ID);
 		System.out.println("Termino do Reconhecimento");
 		
 		
+		//Verifico qual é o maior ID dos contatos. 
 	 	for ( String i[] : comm.getContatos()){
-	   		System.out.println("ip: "+ i[Comunicacao.INDEX_IP] + "  id: "+ i[Comunicacao.INDEX_ID]);
+	   		System.out.println("ip: "+ i[0] + "  id: "+ i[1]);
+	   		int x = Integer.parseInt(i[1]);
+	   		if(x > idMestre){
+	   			idMestre = x;
+	   		}
 	   	}
-	 	
-		while(true){
-			try {
-				
-				verficaBufferEntrada();
-				
-				
-				
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	public void configuraSockets(){
-		
+	 	//Verifico se esse ID é do processo em questão, se for ele entra em mestreMode.
+	 	if(idMestre == ID){
+	 		Mestre m = new Mestre();
+	 		Thread t = new Thread(m);
+	 		t.start();
+	 		
+	 	}
+	 	else{
+	 		Escravo e = new Escravo();
+	 		Thread t = new Thread(e);
+	 		t.start();
+	 	}
 	}
 	public void verficaBufferEntrada(){
-		
-		if (comm.getMulticast().existeMsg()){
-			processaMensagem(comm.getMulticast().getDatagram());
+		if (mc.existeMsg()){
+			processaMensagem(mc.getDatagram());
 		}
-		if (comm.getUnicast().existeMsg()){
-			processaMensagem(comm.getUnicast().getDatagram());
+		if (uc.existeMsg()){
+			processaMensagem(uc.getDatagram());
 		}
 	}
 	public void processaMensagem(DatagramPacket dp){
-		
-		String msg[] = comm.getMulticast().getMsg(dp).split(" ");
-		 
-		switch( Integer.parseInt(msg[Comunicacao.INDEX_TIPO]) ){
-			case Comunicacao.HELLO:
-				break;
-			case Comunicacao.REQ_RELOGIO:
-				break;
-			case Comunicacao.RELOGIO:
-				break;
-			case Comunicacao.RECONHECIMENTO:
-				break;
-			case Comunicacao.ELEICAO:
-				break;
-			case Comunicacao.CALC_RTT_MAX:
-				break;
-			
-		}
-		
 	}
-	public int calculaRTTmax(){
-		
-		int RTT[] = new int[comm.getContatos().size()];
-		double mediaRTT = 0;
-		double RTTMax = 0;
-		double desvioPadraoRTT = 0;
-		int maxTime = 1000; //1s
-		int contRespostas = 0;
-		Multicast mc = comm.getMulticast();
-		
-		long startTime = System.currentTimeMillis();
-		
-		mc.enviaMsg(""+ Comunicacao.CALC_RTT_MAX +"rtt");
-		
-		while( System.currentTimeMillis() - startTime < maxTime){
-			if ( mc.existeMsg()){
-				
-				String msg[] =  mc.getMsg(mc.getDatagram()).split(" ");
-				//se o tipo da msg for de CALC_RTT_MAX
-				if ( msg[Comunicacao.INDEX_TIPO].equals(""+Comunicacao.CALC_RTT_MAX)){
-					
-					RTT[contRespostas] =(int)(System.currentTimeMillis() - startTime);
-					
-					contRespostas++;
-				}
-			}
-			
-		}
-		for ( int i =0; i< contRespostas; i++){
-			mediaRTT += (double)RTT[i]/contRespostas; 
-		}
-		for ( int i =0; i< contRespostas; i++){
-			desvioPadraoRTT += Math.pow((double)(RTT[i] - mediaRTT), 2)/contRespostas;
-			desvioPadraoRTT = Math.sqrt(desvioPadraoRTT);
-		}
-		RTTMax= mediaRTT + desvioPadraoRTT;
-		
-		return (int)RTTMax;
-	}
-
 }
