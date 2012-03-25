@@ -33,15 +33,6 @@ public class Multicast extends Conection{
         getSocket().send(messageOut);
       
     }
-    public synchronized void recebeMsg() throws InterruptedException, IOException{
-        byte[] buffer = new byte[1000];
-                // get messages from others in group
-        DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-        Thread.sleep(10);
-        getSocket().receive(messageIn);
-        inBuffer.add(messageIn);
-      
-    }
 	public MulticastSocket getSocket() {
 		return socket;
 	}
