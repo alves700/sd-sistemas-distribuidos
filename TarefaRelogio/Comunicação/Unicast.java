@@ -15,7 +15,6 @@ import java.util.ArrayList;
 //Classe Unicast UDP
 public class Unicast extends Conection{
 	
-	public final static int serverPort = 7896;
 	public final static int basePort = 5000;
 	
 	public Unicast(int id) throws SocketException{
@@ -31,7 +30,6 @@ public class Unicast extends Conection{
 		byte [] m = msg.getBytes();
 		DatagramPacket pacote = new DatagramPacket(m, m.length, address, port);
 		getSocket().send(pacote);
-		
 	}
 	public void fechaSocket() {
 		isConnected = false;
