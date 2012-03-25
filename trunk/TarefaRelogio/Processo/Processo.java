@@ -20,9 +20,19 @@ public class Processo extends Thread{
 		mc = comm.getMulticast();
 		uc = comm.getUnicast();
 	}
-	public static void main(String [] args) throws InterruptedException, IOException{
-		Processo p = new Processo();
-		p.iniciaProcesso();
+	public static void main(String [] args) {
+		Processo p;
+		try {
+			p = new Processo();
+			p.iniciaProcesso();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	public void iniciaProcesso() throws InterruptedException, IOException{
 ;
