@@ -1,10 +1,15 @@
 package Processo;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 
 import Comunicação.Comunicacao;
 
-public class Mestre extends Processo implements Runnable {
+public class Mestre extends Processo{
+	public Mestre() throws IOException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	//Variáveis do mestre.
 	private final long tempoEnvioHello = 1000;
 	private long ultimoHelloEnviado;
@@ -20,7 +25,12 @@ public class Mestre extends Processo implements Runnable {
 		iniciaVariaveis();
 		while(true){
 			if(System.currentTimeMillis() > ultimoHelloEnviado + tempoEnvioHello){
-				mc.enviaMsg(""+Comunicacao.HELLO+" "+"hello");
+				try {
+					mc.enviaMsg(""+Comunicacao.HELLO+" "+"hello");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				ultimoHelloEnviado = System.currentTimeMillis();
 			}
 			
@@ -56,7 +66,7 @@ public class Mestre extends Processo implements Runnable {
 			
 		}
 	}
-	public int calculaRTTmax(){
+	public int calculaRTTmax() throws IOException{
 		
 		int RTT[] = new int[comm.getContatos().size()];
 		double mediaRTT = 0;

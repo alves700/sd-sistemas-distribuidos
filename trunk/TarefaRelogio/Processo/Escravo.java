@@ -1,5 +1,6 @@
 package Processo;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 
 import Comunicação.Comunicacao;
@@ -17,7 +18,8 @@ public class Escravo extends Processo implements Runnable {
 	private int ID;
 	private int idMestre;
 	private int idNovoMestre;
-	public Escravo(int ID, int idMestre){
+
+	public Escravo(int ID, int idMestre) throws IOException{
 		this.ID = ID;
 		this.idMestre = super.idMestre;
 		idNovoMestre = -1;
@@ -29,7 +31,7 @@ public class Escravo extends Processo implements Runnable {
 	}
 	
 	//Método de eleicao, escravo envia sua ID caso ela seja maior q a ID armazenada por mensagens de eleicoes passadas.
-	public void eleicao(){
+	public void eleicao() throws IOException{
 		if(!eleicaoOcorrendo){
 			tempoInicioEleicao = System.currentTimeMillis();
 			eleicaoOcorrendo = true;
@@ -39,7 +41,7 @@ public class Escravo extends Processo implements Runnable {
 		}
 	}
 	@Override
-	public void run() {
+	public void run(){
 		iniciaVariaveis();
 		while(true){
 			//Verifica se a eleicao ainda está ocorrendo, se estiver: eleicao acaba, e o mestre é consagrado.
@@ -53,9 +55,15 @@ public class Escravo extends Processo implements Runnable {
 				// Caso o esse escravo foi eleito como mestre, eçe instancia uma thread Mestre e finaliza seu processo como escravo.
 				if(idMestre == ID){
 					
-					Mestre m = new Mestre();
-			 		Thread t = new Thread(m);
-			 		t.start();
+					Mestre m;
+					try {
+						m = new Mestre();
+						m.start();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+			 		
 			 		try {
 						this.finalize();
 					} catch (Throwable e) {
@@ -68,7 +76,12 @@ public class Escravo extends Processo implements Runnable {
 			}
 			//Verifica quando foi a ultima vez que recebeu um hello, caso o tempo seja ultrapassado, inicia eleição.
 			else if(System.currentTimeMillis() > ultimoHelloRecebido + tempoEsperaHello){
-				eleicao();
+				try {
+					eleicao();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}	
 			
 			verficaBufferEntrada();
