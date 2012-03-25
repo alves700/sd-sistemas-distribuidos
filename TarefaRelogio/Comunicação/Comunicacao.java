@@ -34,29 +34,25 @@ public class Comunicacao {
 	private Multicast mc;
 	
 	
-	public Comunicacao(int id){
+	public Comunicacao(int id) throws IOException{
 		
 		contatos = new ArrayList<String[]>();
 		
 		//Armazena seu próprio IP da rede.
-		try {
-			InetAddress address = InetAddress.getLocalHost();
-			meuIP = address.getHostAddress();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  
 		
+		InetAddress address = InetAddress.getLocalHost();
+		meuIP = address.getHostAddress();
+		 
 		mc = new Multicast();
 		mc.joinMulticast();
-		mc.start();
-		
+		Thread t1 = new Thread(mc);
+		t1.start();
 		// O uc pode ser configurado somente quando for necessário enviar ou receber mensagens.
 		uc = new Unicast(id);
 	}
 	// Método iniciado pelo Processo para reconhecer os processos vizinhos, não sei como fazer esse método para funcionar
 	// tudo no mesmo PC, estou fazendo com q ele funcione somente em PC's diferentes. Testes realizados em 2 PC's diferentes.
-	public void reconheceOutrosProcessos(int ID){
+	public void reconheceOutrosProcessos(int ID) throws InterruptedException, IOException{
 		long t1 = System.currentTimeMillis();
 		long t2 = System.currentTimeMillis();
 		
@@ -93,12 +89,8 @@ public class Comunicacao {
 				}
 				
 			}
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			Thread.sleep(10);
 			
 			t2 = System.currentTimeMillis();
 		}
