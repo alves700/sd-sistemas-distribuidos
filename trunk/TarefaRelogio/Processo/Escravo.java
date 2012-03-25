@@ -24,7 +24,7 @@ public class Escravo extends Processo implements Runnable {
 			tempoInicioEleicao = System.currentTimeMillis();
 			eleicaoOcorrendo = true;
 		}
-		if(ID > idNovoMestre){
+		if(ID >= idNovoMestre){
 			mc.enviaMsg(comm.protMsg(comm.ELEICAO, ID));
 		}
 	}
@@ -83,8 +83,8 @@ public class Escravo extends Processo implements Runnable {
 			case Comunicacao.RECONHECIMENTO:
 				break;
 			case Comunicacao.ELEICAO:
-				if(Integer.parseInt(msg[1]) >= ID){
-					idNovoMestre = Integer.parseInt(msg[1]);
+				if(Integer.parseInt(msg[Comunicacao.INDEX_MSG]) >= ID){
+					idNovoMestre = Integer.parseInt(msg[Comunicacao.INDEX_MSG]);
 				}
 				if(!eleicaoOcorrendo){
 					tempoInicioEleicao = System.currentTimeMillis();
