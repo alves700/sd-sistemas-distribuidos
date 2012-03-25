@@ -11,7 +11,7 @@ import java.util.TreeSet;
 public class Comunicacao {
 	
 	
-	public final static int INDEX_ID = 1;
+	public final static int INDEX_MSG = 1;
 	public final static int INDEX_IP = 0;
 	public final static int INDEX_TIPO = 0;
 	
@@ -79,7 +79,7 @@ public class Comunicacao {
                 // Verifica se o IP ja existe na sua lista de contatos.
 				int i;
                 for(i = 0 ; i<contatos.size(); i++){
-                        if(contato[INDEX_ID].equals(contatos.get(i)[INDEX_ID])){
+                        if(contato[INDEX_MSG].equals(contatos.get(i)[INDEX_MSG])){
                                 processoExistente = true;
                         }
                 }
@@ -87,7 +87,7 @@ public class Comunicacao {
                 //tempoDeReconhecimento para o término do reconhecimento entre processos
                if ( !processoExistente ){
 					contatos.add(contato);
-					System.out.println(contato[INDEX_IP] + " "+ contato[INDEX_ID]);
+					System.out.println(contato[INDEX_IP] + " "+ contato[INDEX_MSG]);
 					mc.enviaMsg(protMsg(RECONHECIMENTO,ID));
 					t1 = System.currentTimeMillis();
 				}
