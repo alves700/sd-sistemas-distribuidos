@@ -57,9 +57,6 @@ public class Escravo extends Processo implements Runnable {
 					
 					Mestre m;
 					try {
-						uc.fechaSocket();
-						mc.leaveGroup();
-						
 						m = new Mestre(ID);
 						m.start();
 						
