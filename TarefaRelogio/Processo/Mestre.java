@@ -36,7 +36,7 @@ public class Mestre extends Processo implements Runnable {
 		
 	}
 	public void processaMensagem(DatagramPacket dp){
-		String msg[] = comm.getMulticast().getMsg(dp).split(" ");
+		String[] msg = mc.getMsg(dp).split(" ");
 		 
 		switch( Integer.parseInt(msg[Comunicacao.INDEX_TIPO]) ){
 
