@@ -12,7 +12,7 @@ public class Multicast extends Conection{
     private MulticastSocket socket;
     
     public Multicast(){
-    	this.port = 1000;
+    	this.port = 5000;
     	inBuffer = new ArrayList<DatagramPacket>();
     }
     public void joinMulticast() throws IOException{
