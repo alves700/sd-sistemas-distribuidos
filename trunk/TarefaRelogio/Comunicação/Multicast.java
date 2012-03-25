@@ -17,14 +17,14 @@ public class Multicast extends Conection{
     }
     public void joinMulticast() throws IOException{
         address = InetAddress.getByName(MCAdrress);
-        socket = new MulticastSocket(port);
-        socket.joinGroup(address);
+        setSocket(new MulticastSocket(port));
+        getSocket().joinGroup(address);
         this.isConnected = true;
         
     }
     public void leaveGroup() throws IOException {
     	this.isConnected = false;
-        socket.leaveGroup(address);
+        getSocket().leaveGroup(address);
         if(getSocket() != null) getSocket().close();
     }
     public void enviaMsg(String msg) throws IOException{
@@ -33,6 +33,20 @@ public class Multicast extends Conection{
         getSocket().send(messageOut);
       
     }
-    
+    public synchronized void recebeMsg() throws InterruptedException, IOException{
+        byte[] buffer = new byte[1000];
+                // get messages from others in group
+        DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+        Thread.sleep(10);
+        getSocket().receive(messageIn);
+        inBuffer.add(messageIn);
+      
+    }
+	public MulticastSocket getSocket() {
+		return socket;
+	}
+	public void setSocket(MulticastSocket socket) {
+		this.socket = socket;
+	}
 }
 
