@@ -11,7 +11,6 @@ public class Processo{
 	protected Unicast uc;
 	
 	protected int idMestre = -1;
-	protected int idNovoMestre = -1;
 	protected int ID;
 	
 	public Processo(){
@@ -45,7 +44,7 @@ public class Processo{
 	 		
 	 	}
 	 	else{
-	 		Escravo e = new Escravo();
+	 		Escravo e = new Escravo(ID,idMestre);
 	 		Thread t = new Thread(e);
 	 		t.start();
 	 	}
