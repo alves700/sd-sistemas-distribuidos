@@ -7,7 +7,7 @@ import Comunicação.Comunicacao;
 public class Escravo extends Processo implements Runnable {
 	//Variáveis de Eleicao.
 	private final long tempoEleicao = 5000;
-	private long tempoInicioEleicao;
+	private long tempoInicioEleicao = Long.MIN_VALUE;
 	private boolean eleicaoOcorrendo = false;
 	
 	//Variáveis do Hello.
@@ -36,7 +36,22 @@ public class Escravo extends Processo implements Runnable {
 			if(eleicaoOcorrendo && System.currentTimeMillis() > tempoInicioEleicao + tempoEleicao){
 				eleicaoOcorrendo = false;
 				idMestre = idNovoMestre;
+				tempoInicioEleicao = Long.MIN_VALUE;
+				
 				System.out.println("NovoMestre ID" + idMestre);
+				
+				if(idNovoMestre == ID){
+					
+					Mestre m = new Mestre();
+			 		Thread t = new Thread(m);
+			 		t.start();
+			 		try {
+						this.finalize();
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 			else if(System.currentTimeMillis() > ultimoHelloRecebido + tempoEsperaHello){
 				eleicao();
@@ -68,7 +83,7 @@ public class Escravo extends Processo implements Runnable {
 			case Comunicacao.RECONHECIMENTO:
 				break;
 			case Comunicacao.ELEICAO:
-				if(Integer.parseInt(msg[1])<ID){
+				if(Integer.parseInt(msg[1]) >= ID){
 					idNovoMestre = Integer.parseInt(msg[1]);
 				}
 				if(!eleicaoOcorrendo){
