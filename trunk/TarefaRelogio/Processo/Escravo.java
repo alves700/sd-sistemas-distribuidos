@@ -57,8 +57,12 @@ public class Escravo extends Processo implements Runnable {
 					
 					Mestre m;
 					try {
-						m = new Mestre();
+						uc.fechaSocket();
+						mc.leaveGroup();
+						
+						m = new Mestre(ID);
 						m.start();
+						
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();

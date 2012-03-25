@@ -15,6 +15,7 @@ public class Processo extends Thread{
 	protected int ID;
 	
 	public Processo() throws IOException{
+		ID = (int) (Math.random()*40000)+1;
 		comm = new Comunicacao(ID);
 		mc = comm.getMulticast();
 		uc = comm.getUnicast();
@@ -24,7 +25,7 @@ public class Processo extends Thread{
 		p.iniciaProcesso();
 	}
 	public void iniciaProcesso() throws InterruptedException, IOException{
-		ID = (int) (Math.random()*40000)+1;
+;
 		comm.reconheceOutrosProcessos(ID);
 		System.out.println("Termino do Reconhecimento");
 		
@@ -39,7 +40,7 @@ public class Processo extends Thread{
 	   	}
 	 	//Verifico se esse ID é do processo em questão, se for ele entra em mestreMode.
 	 	if(idMestre == ID){
-	 		Mestre m = new Mestre();
+	 		Mestre m = new Mestre(ID);
 	 		m.start();
 	 		
 	 	}
