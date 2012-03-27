@@ -24,6 +24,7 @@ public class Comunicacao {
 	
 	
 	private String meuIP;
+	private int meuID;
 	// Duracao de reconhecimento de PC's = 10s
 	private final long tempoReconhecimento = 10000;
 	
@@ -46,6 +47,8 @@ public class Comunicacao {
 		t1.start();
 		// O uc pode ser configurado somente quando for necessário enviar ou receber mensagens.
 		uc = new Unicast(id);
+		meuID = id;
+		System.out.println("IP da máquina: " + meuIP +"    ID da máquina: " + id);
 	}
 	// Método iniciado pelo Processo para reconhecer os processos vizinhos, não sei como fazer esse método para funcionar
 	// tudo no mesmo PC, estou fazendo com q ele funcione somente em PC's diferentes. Testes realizados em 2 PC's diferentes.
@@ -78,7 +81,7 @@ public class Comunicacao {
                 }
                 //Se processo não existir na tabela de processos, adiciona-o na lista e envia sua ID para esse processo adicioná-lo, dá mais
                 //tempoDeReconhecimento para o término do reconhecimento entre processos
-               if ( !processoExistente ){
+               if ( !processoExistente && Integer.parseInt(contato[INDEX_MSG]) != meuID){
 					contatos.add(contato);
 					System.out.println(contato[INDEX_IP] + " "+ contato[INDEX_MSG]);
 					mc.enviaMsg(protMsg(RECONHECIMENTO,ID));

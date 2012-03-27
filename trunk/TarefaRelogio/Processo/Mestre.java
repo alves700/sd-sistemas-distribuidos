@@ -11,16 +11,20 @@ public class Mestre extends Processo{
 	private final long tempoEnvioHello = 1000;
 	private long ultimoHelloEnviado;
 	
-	private int meuID;
+	//Variáveis de Calculo do RTT maximo
+	private boolean requerindoRTT = false;
+	private long RTTMax = 0;
+	private long ultimoRequerimentoEnviado;
+	private long tempoRequerimentoRTT = 1000;
 	
-	public Mestre(int ID) throws IOException {
-		meuID = ID;
+	
+	public Mestre() throws IOException {
+		System.out.println("Sou o Mestre.");
 	}
 	
 	public void iniciaVariaveis(){
 		ultimoHelloEnviado = System.currentTimeMillis();
 	}
-
 
 	@Override
 	public void run() {
@@ -35,6 +39,10 @@ public class Mestre extends Processo{
 				}
 				ultimoHelloEnviado = System.currentTimeMillis();
 			}
+			if(requerindoRTT && System.currentTimeMillis() > ultimoRequerimentoEnviado + tempoRequerimentoRTT){
+				
+				//requerindoRTT = false;
+			}
 			
 			verficaBufferEntrada();
 			
@@ -45,7 +53,7 @@ public class Mestre extends Processo{
 				e.printStackTrace();
 			}
 		}
-		
+	
 	}
 	public void processaMensagem(DatagramPacket dp){
 		String[] msg = mc.getMsg(dp).split(" ");
@@ -61,22 +69,22 @@ public class Mestre extends Processo{
 			case Comunicacao.ELEICAO:
 				// Caso recebeu mensagem de eleição é pq o tempo limite para hello estourou em pelo menos 
 				// um processo, então mestre se mata.
-				System.exit(0);
+				//System.exit(0);
 				break;
 			case Comunicacao.CALC_RTT_MAX:
+				
 				break;
 			
 		}
 	}
 	public int calculaRTTmax() throws IOException{
 		
-		int RTT[] = new int[comm.getContatos().size()];
+		int RTT[] = new int[comm.getContatos().size()];	
 		double mediaRTT = 0;
 		double RTTMax = 0;
 		double desvioPadraoRTT = 0;
 		int maxTime = 1000; //1s
 		int contRespostas = 0;
-
 		
 		long startTime = System.currentTimeMillis();
 		
