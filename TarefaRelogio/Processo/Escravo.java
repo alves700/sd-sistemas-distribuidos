@@ -15,14 +15,9 @@ public class Escravo extends Processo implements Runnable {
 	private final long tempoEsperaHello = 3000; // tempo de espera máximo aguardado pelo Hello do mestre.
 	private long ultimoHelloRecebido; //Armazena o tempo em que o ultimo hello foi recebido.
 	
-	private int ID;
-	private int idMestre;
-	private int idNovoMestre;
+	private int idNovoMestre = -1;
 
-	public Escravo(int ID, int idMestre) throws IOException{
-		this.ID = ID;
-		this.idMestre = super.idMestre;
-		idNovoMestre = -1;
+	public Escravo() throws IOException{
 	}
 	
 	
@@ -57,20 +52,11 @@ public class Escravo extends Processo implements Runnable {
 					
 					Mestre m;
 					try {
-						m = new Mestre(ID);
+						m = this.criaMestre();
 						m.start();
-						
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-			 		
-			 		try {
 						this.finalize();
-					} catch (Throwable e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					} catch (IOException e2) {e2.printStackTrace();}
+					catch (Throwable e) {e.printStackTrace();}
 				}
 				//Variáveis são reiniciadas.
 				iniciaVariaveis();
