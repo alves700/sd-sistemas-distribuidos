@@ -109,7 +109,7 @@ public class Mestre extends Processo{
 				//Caso recebeu msg de Calc de RTT Max que não seja de si mesmo, e está requerindo RTT's adiciona o tempo de RTT na lista. 
 				if(requerindoRTT && Integer.parseInt(msg [Comunicacao.INDEX_ID]) != ID){
 					int rttt = (int) (System.currentTimeMillis()-ultimoReqRTTEnviado);
-					//System.out.println("Msg de ID: " +  msg[Comunicacao.INDEX_ID]+" Seu RTT: "+rttt);
+					System.out.println("Msg de ID: " +  msg[Comunicacao.INDEX_ID]+" Seu RTT: "+rttt);
 					RTT.add(rttt);
 				}
 				break;
@@ -129,7 +129,7 @@ public class Mestre extends Processo{
 		for ( int i =0; i< contRespostas; i++){
 			mediaRTT += (double)RTT.get(i)/contRespostas; 
 		}
-		//System.out.println("Media RTT: "+ mediaRTT);
+		System.out.println("Media RTT: "+ mediaRTT);
 		if(contRespostas>1){
 			for ( int i =0; i< contRespostas; i++){
 				desvioPadraoRTT += Math.pow((double)(RTT.get(i) - mediaRTT), 2)/(contRespostas-1);
@@ -140,7 +140,7 @@ public class Mestre extends Processo{
 			desvioPadraoRTT = 0;
 		}
 				
-		//System.out.println("Desvio Padrao RTT: "+ desvioPadraoRTT);
+		System.out.println("Desvio Padrao RTT: "+ desvioPadraoRTT);
 		RTTMax= mediaRTT + desvioPadraoRTT;
 		
 		return (int)RTTMax;
