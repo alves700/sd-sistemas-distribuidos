@@ -47,7 +47,7 @@ public class Escravo extends Processo implements Runnable {
 				update();
 				
 				if(!this.isInterrupted()){
-					Thread.sleep(1);
+					Thread.sleep(10);
 				}
 				
 			}catch (InterruptedException e) {
