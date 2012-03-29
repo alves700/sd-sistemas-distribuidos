@@ -20,8 +20,8 @@ public class Unicast extends Conection{
 		inBuffer = new ArrayList<DatagramPacket>();
 	}
 	// Dado um endereço configurado e uma porta envia a mensagem para esse endereço e porta.
-	public void enviaMsg(String msg, String ip, int port) throws IOException{
-		
+	public void enviaMsg(String ip, int id, String msg) throws IOException{
+		int port = basePort +id;
 		address = InetAddress.getByName(ip);
 		byte [] m = msg.getBytes();
 		DatagramPacket pacote = new DatagramPacket(m, m.length, address, port);

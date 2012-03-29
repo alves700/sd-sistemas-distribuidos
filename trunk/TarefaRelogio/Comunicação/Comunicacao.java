@@ -7,10 +7,13 @@ import java.util.ArrayList;
 
 public class Comunicacao {
 	
-	
-	public final static int INDEX_MSG = 1;
-	public final static int INDEX_IP = 0;
+	//Para as mensagens enviadas/recebidas.
+	public final static int INDEX_MSG = 2;
 	public final static int INDEX_TIPO = 0;
+	//Para a lista de contatos.
+	public final static int INDEX_IP = 0;
+	//Para ambos.
+	public final static int INDEX_ID = 1;
 	
 	public final static int HELLO = 0;
 	public final static int	REQ_RELOGIO = 1;
@@ -43,10 +46,11 @@ public class Comunicacao {
 		 
 		mc = new Multicast();
 		mc.joinMulticast();
-		Thread t1 = new Thread(mc);
-		t1.start();
-		// O uc pode ser configurado somente quando for necessário enviar ou receber mensagens.
+		mc.start();
+
 		uc = new Unicast(id);
+		uc.start();
+		
 		meuID = id;
 		System.out.println("IP da máquina: " + meuIP +"    ID da máquina: " + id);
 	}
@@ -75,15 +79,15 @@ public class Comunicacao {
                 // Verifica se o IP ja existe na sua lista de contatos.
 				int i;
                 for(i = 0 ; i<contatos.size(); i++){
-                        if(contato[INDEX_MSG].equals(contatos.get(i)[INDEX_MSG])){
+                        if(contato[INDEX_ID].equals(contatos.get(i)[INDEX_ID])){
                                 processoExistente = true;
                         }
                 }
                 //Se processo não existir na tabela de processos, adiciona-o na lista e envia sua ID para esse processo adicioná-lo, dá mais
                 //tempoDeReconhecimento para o término do reconhecimento entre processos
-               if ( !processoExistente && Integer.parseInt(contato[INDEX_MSG]) != meuID){
+               if ( !processoExistente && Integer.parseInt(contato[INDEX_ID]) != meuID){
 					contatos.add(contato);
-					System.out.println(contato[INDEX_IP] + " "+ contato[INDEX_MSG]);
+					//System.out.println(contato[INDEX_IP] + " "+ contato[INDEX_MSG]);
 					mc.enviaMsg(protMsg(RECONHECIMENTO,ID));
 					t1 = System.currentTimeMillis();
 				}
@@ -95,11 +99,13 @@ public class Comunicacao {
 			t2 = System.currentTimeMillis();
 		}
 	}
-	public String protMsg(int tipo, String msg){
-		return ""+tipo+" "+msg;
+	//Mensagens que além do tipo e da ID uma outra informação é necessário utilizar outra informação
+	public String protMsg(int tipo, int ID, String msg){
+		return ""+ tipo + " " + ID + " " + msg;
 	}
+	//Mensagens que são definidas somente pelo tipo e pela ID do processo que enviou-a.
 	public String protMsg(int tipo, int ID){
-		return ""+tipo+" "+ID;
+		return ""+ tipo + " " + ID;
 	}
 	
 	public Unicast getUnicast(){
@@ -110,6 +116,9 @@ public class Comunicacao {
 	}
 	public ArrayList<String[]> getContatos() {
 		return contatos;
+	}
+	public String getIP(){
+		return meuIP;
 	}
 
 }

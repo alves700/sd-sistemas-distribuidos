@@ -12,6 +12,7 @@ public class Processo extends Thread{
 	protected Unicast uc;
 	
 	protected int idMestre = -1;
+	protected String ipMestre;
 	protected int ID;
 	
 	public Processo(){
@@ -37,6 +38,7 @@ public class Processo extends Thread{
 		e.mc = this.mc;
 		e.uc = this.uc;
 		e.idMestre = this.idMestre;
+		e.ipMestre = this.ipMestre;
 		return e;
 	}
 	
@@ -53,10 +55,7 @@ public class Processo extends Thread{
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		while(true){
-		}
-		
+		}	
 	}
 	public void iniciaProcesso() throws InterruptedException, IOException{
 ;
@@ -64,15 +63,19 @@ public class Processo extends Thread{
 		System.out.println("Termino do Reconhecimento");
 		
 		
-		//Verifico qual é o maior ID dos contatos. 
+		//Verifico qual é o maior ID dos contatos.
+		System.out.println("Minha Lista De Contatos:");
 		idMestre = ID;
+		ipMestre = comm.getIP();
 	 	for ( String i[] : comm.getContatos()){
 	   		System.out.println("ip: "+ i[0] + "  id: "+ i[1]);
 	   		int x = Integer.parseInt(i[1]);
 	   		if(x > idMestre){
+	   			ipMestre = i[0];
 	   			idMestre = x;
 	   		}
 	   	}
+	 	System.out.println("");
 	 	//Verifico se esse ID é do processo em questão, se for ele entra em mestreMode.
 	 	if(idMestre == ID){
 	 		Mestre m = this.criaMestre();
@@ -84,7 +87,7 @@ public class Processo extends Thread{
 	 		e.start();
 	 	}
 	}
-	public void verficaBufferEntrada(){
+	public void verficaBufferEntrada() throws IOException{
 		if (mc.existeMsg()){
 			processaMensagem(mc.getDatagram());
 		}
@@ -92,6 +95,6 @@ public class Processo extends Thread{
 			processaMensagem(uc.getDatagram());
 		}
 	}
-	public void processaMensagem(DatagramPacket dp){
+	public void processaMensagem(DatagramPacket dp) throws IOException{
 	}
 }

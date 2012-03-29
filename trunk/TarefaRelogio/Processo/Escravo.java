@@ -16,8 +16,10 @@ public class Escravo extends Processo implements Runnable {
 	private long ultimoHelloRecebido; //Armazena o tempo em que o ultimo hello foi recebido.
 	
 	private int idNovoMestre = -1;
-
+	
+	
 	public Escravo() throws IOException{
+		System.out.println("Sou um Escravo");
 	}
 	
 	
@@ -38,52 +40,65 @@ public class Escravo extends Processo implements Runnable {
 	@Override
 	public void run(){
 		iniciaVariaveis();
-		while(true){
-			//Verifica se a eleicao ainda está ocorrendo, se estiver: eleicao acaba, e o mestre é consagrado.
-			if(eleicaoOcorrendo && System.currentTimeMillis() > tempoInicioEleicao + tempoEleicao){
-				eleicaoOcorrendo = false;
-				idMestre = idNovoMestre;
-				idNovoMestre = -1;
-				tempoInicioEleicao = Long.MIN_VALUE;
+		while(!this.isInterrupted()){
+			try{
+				envioDeMensagens();
+				verficaBufferEntrada();
+				update();
 				
-				System.out.println("NovoMestre ID " + idMestre);
-				// Caso o esse escravo foi eleito como mestre, eçe instancia uma thread Mestre e finaliza seu processo como escravo.
-				if(idMestre == ID){
-					
-					Mestre m;
-					try {
-						m = this.criaMestre();
-						m.start();
-						this.finalize();
-					} catch (IOException e2) {e2.printStackTrace();}
-					catch (Throwable e) {e.printStackTrace();}
+				if(!this.isInterrupted()){
+					Thread.sleep(1);
 				}
-				//Variáveis são reiniciadas.
-				iniciaVariaveis();
-			}
-			//Verifica quando foi a ultima vez que recebeu um hello, caso o tempo seja ultrapassado, inicia eleição.
-			else if(System.currentTimeMillis() > ultimoHelloRecebido + tempoEsperaHello){
-				try {
-					eleicao();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}	
-			
-			verficaBufferEntrada();
-			
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
+				
+			}catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		
 		}
 		
 	}
+	public void envioDeMensagens(){
+		//Verifica quando foi a ultima vez que recebeu um hello, caso o tempo seja ultrapassado, inicia eleição.
+		if(System.currentTimeMillis() > ultimoHelloRecebido + tempoEsperaHello){
+			try {
+				eleicao();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
+	}
+	public void update(){
+		//Verifica se a eleicao ainda está ocorrendo, se estiver: eleicao acaba, e o mestre é consagrado.
+		if(eleicaoOcorrendo && System.currentTimeMillis() > tempoInicioEleicao + tempoEleicao){
+			eleicaoOcorrendo = false;
+			idMestre = idNovoMestre;
+			idNovoMestre = -1;
+			
+			if(idMestre != ID){
+				System.out.println("NovoMestre ID " + idMestre);	
+			}
+			// Caso o esse escravo foi eleito como mestre, eçe instancia uma thread Mestre e finaliza seu processo como escravo.
+			else{
+				
+				Mestre m;
+				try {
+					m = this.criaMestre();
+					m.start();
+					this.interrupt();
+				} catch (IOException e2) {e2.printStackTrace();}
+				catch (Throwable e) {e.printStackTrace();}
+			}
+			//Variáveis são reiniciadas.
+			iniciaVariaveis();
+		}
+	}
 	//Verifica as os tipos de mensagem que chegam.
-	public void processaMensagem(DatagramPacket dp){
+	public void processaMensagem(DatagramPacket dp) throws IOException{
 		String x = mc.getMsg(dp);
 		String msg[] = x.split(" ");
 		
@@ -98,14 +113,17 @@ public class Escravo extends Processo implements Runnable {
 				break;
 			case Comunicacao.RECONHECIMENTO:
 				break;
-			//Verifica se a ID da mensagem de eleição que chegou é maior ou igual a sua. Se for
-			//armazena o id do novo mestre como sendo o ID da mensagem que chegou.
 			case Comunicacao.ELEICAO:
-				if(Integer.parseInt(msg[Comunicacao.INDEX_MSG]) > idNovoMestre ){
-					idNovoMestre = Integer.parseInt(msg[Comunicacao.INDEX_MSG]);
+				//Verifica se a ID da mensagem de eleição que chegou é maior ou igual a sua. Se for
+				//armazena o id do novo mestre como sendo o ID da mensagem que chegou.
+				if(Integer.parseInt(msg[Comunicacao.INDEX_ID]) > idNovoMestre ){
+					idNovoMestre = Integer.parseInt(msg[Comunicacao.INDEX_ID]);
 				}
 				break;
 			case Comunicacao.CALC_RTT_MAX:
+				//Envia mensagem para o mestre para isso utiliza o Ip do mestre e seu Id (ID calcula a porta do mestre).
+				//O conteudo da msg informa que o tipo é de CALC RTT MAX e a ID desse processo escravo.
+				uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.CALC_RTT_MAX, ID));
 				break;
 			
 		}
