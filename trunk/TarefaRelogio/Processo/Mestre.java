@@ -129,7 +129,7 @@ public class Mestre extends Processo{
 		for ( int i =0; i< contRespostas; i++){
 			mediaRTT += (double)RTT.get(i)/contRespostas; 
 		}
-		System.out.println("Media RTT: "+ mediaRTT);
+		//System.out.println("Media RTT: "+ mediaRTT);
 		if(contRespostas>1){
 			for ( int i =0; i< contRespostas; i++){
 				desvioPadraoRTT += Math.pow((double)(RTT.get(i) - mediaRTT), 2)/(contRespostas-1);
@@ -140,7 +140,7 @@ public class Mestre extends Processo{
 			desvioPadraoRTT = 0;
 		}
 				
-		System.out.println("Desvio Padrao RTT: "+ desvioPadraoRTT);
+		//System.out.println("Desvio Padrao RTT: "+ desvioPadraoRTT);
 		RTTMax= mediaRTT + desvioPadraoRTT;
 		
 		return (int)RTTMax;
