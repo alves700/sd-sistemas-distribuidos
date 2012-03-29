@@ -17,7 +17,7 @@ public class testeUnicastCliente {
 			
 			u.start();
 			String a = "oioi";
-			u.enviaMsg(a, "localhost", 5000 + id);
+			//u.enviaMsg(a, "localhost", 5000 + id);
 			
 			while(true){
 				DatagramPacket dp = u.getDatagram();
@@ -27,7 +27,7 @@ public class testeUnicastCliente {
 					if ( msg != null ){
 						System.out.println("MSG:"+ msg);
 					}
-					u.enviaMsg(("burro"+ id), "localhost", 5000+ idDocara);
+					//u.enviaMsg(("burro"+ id), "localhost", 5000+ idDocara);
 				}
 				try {
 					Thread.sleep(10);

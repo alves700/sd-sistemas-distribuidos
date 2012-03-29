@@ -19,7 +19,7 @@ public abstract class Conection  extends Thread{
         byte[] buffer = new byte[1000];
                 // get messages from others in group
         DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-        Thread.sleep(10);
+        Thread.sleep(1);
         getSocket().receive(messageIn);
         inBuffer.add(messageIn);
       

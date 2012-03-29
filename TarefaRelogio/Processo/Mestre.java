@@ -2,6 +2,7 @@ package Processo;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.util.ArrayList;
 
 import Comunicação.Comunicacao;
 
@@ -12,11 +13,16 @@ public class Mestre extends Processo{
 	private long ultimoHelloEnviado;
 	
 	//Variáveis de Calculo do RTT maximo
-	private boolean requerindoRTT = false;
-	private long RTTMax = 0;
-	private long ultimoRequerimentoEnviado;
-	private long tempoRequerimentoRTT = 1000;
+	private int RTTMax = 0;
 	
+	private final long tempoEsperaRTT = 1000;//Espera por 1s o RTT de outros escravos
+	private final long tempoReqRTT = 3000;//Recalcula o RTT de 3 em 3 segundos.
+	
+	private boolean requerindoRTT = false;//True quando mestre requisita RTT, modificada para false quando RTT é calculado. 
+	
+	private long ultimoReqRTTEnviado; //"Horário" em que ocorreu a ultima requisição de RTT, também é utilizada para o cálculo do RTT de um processo. 
+	
+	ArrayList <Integer> RTT = new ArrayList <Integer>(); // ArrayList que armazena os RTTs dos processos.
 	
 	public Mestre() throws IOException {
 		System.out.println("Sou o Mestre.");
@@ -24,37 +30,65 @@ public class Mestre extends Processo{
 	
 	public void iniciaVariaveis(){
 		ultimoHelloEnviado = System.currentTimeMillis();
+		ultimoReqRTTEnviado = System.currentTimeMillis();
 	}
 
 	@Override
 	public void run() {
 		iniciaVariaveis();
 		while(true){
-			if(System.currentTimeMillis() > ultimoHelloEnviado + tempoEnvioHello){
-				try {
-					mc.enviaMsg(""+Comunicacao.HELLO+" "+"hello");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				ultimoHelloEnviado = System.currentTimeMillis();
-			}
-			if(requerindoRTT && System.currentTimeMillis() > ultimoRequerimentoEnviado + tempoRequerimentoRTT){
-				
-				//requerindoRTT = false;
-			}
-			
-			verficaBufferEntrada();
-			
 			try {
-				Thread.sleep(5);
+				
+				envioDeMensagens();
+				verficaBufferEntrada();
+				update();
+			
+				Thread.sleep(1);
+				
 			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	
 	}
+	public void envioDeMensagens() throws IOException{
+		//Envio de Hello periodicamente.
+		if(System.currentTimeMillis() > ultimoHelloEnviado + tempoEnvioHello){
+			try {
+				mc.enviaMsg(comm.protMsg(Comunicacao.HELLO,ID));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ultimoHelloEnviado = System.currentTimeMillis();
+		}
+		//Envio de requisição troca de mensagens para cálculo de RTT.
+		if(System.currentTimeMillis() > ultimoReqRTTEnviado + tempoReqRTT){
+			
+			mc.enviaMsg(comm.protMsg(Comunicacao.CALC_RTT_MAX,ID));
+			ultimoReqRTTEnviado = System.currentTimeMillis();
+			requerindoRTT = true;
+		}
+		
+	}
+	public void update() throws IOException{
+		
+		// Cálcula o RTT máximo após o tempoEsperaRTT ter passado.
+		if(requerindoRTT && System.currentTimeMillis() > ultimoReqRTTEnviado + tempoEsperaRTT){
+			
+			requerindoRTT = false;
+			RTTMax = calculaRTTmax();
+			System.out.println("RTTMaximo Calculado: "+RTTMax+" Num de processos que participaram: "+RTT.size());
+			
+			RTT.clear();
+			
+		}
+	}
+	
 	public void processaMensagem(DatagramPacket dp){
 		String[] msg = mc.getMsg(dp).split(" ");
 		 
@@ -72,45 +106,41 @@ public class Mestre extends Processo{
 				//System.exit(0);
 				break;
 			case Comunicacao.CALC_RTT_MAX:
-				
+				//Caso recebeu msg de Calc de RTT Max que não seja de si mesmo, e está requerindo RTT's adiciona o tempo de RTT na lista. 
+				if(requerindoRTT && Integer.parseInt(msg [Comunicacao.INDEX_ID]) != ID){
+					int rttt = (int) (System.currentTimeMillis()-ultimoReqRTTEnviado);
+					//System.out.println("Msg de ID: " +  msg[Comunicacao.INDEX_ID]+" Seu RTT: "+rttt);
+					RTT.add(rttt);
+				}
 				break;
 			
 		}
 	}
 	public int calculaRTTmax() throws IOException{
 		
-		int RTT[] = new int[comm.getContatos().size()];	
 		double mediaRTT = 0;
 		double RTTMax = 0;
 		double desvioPadraoRTT = 0;
-		int maxTime = 1000; //1s
-		int contRespostas = 0;
+		int contRespostas = RTT.size();
 		
-		long startTime = System.currentTimeMillis();
+		if(contRespostas == 0)
+			return 0;
 		
-		mc.enviaMsg(""+ Comunicacao.CALC_RTT_MAX +"rtt");
-		
-		while( System.currentTimeMillis() - startTime < maxTime){
-			if ( mc.existeMsg()){
-				
-				String msg[] =  mc.getMsg(mc.getDatagram()).split(" ");
-				//se o tipo da msg for de CALC_RTT_MAX
-				if ( msg[Comunicacao.INDEX_TIPO].equals(""+Comunicacao.CALC_RTT_MAX)){
-					
-					RTT[contRespostas] =(int)(System.currentTimeMillis() - startTime);
-					
-					contRespostas++;
-				}
+		for ( int i =0; i< contRespostas; i++){
+			mediaRTT += (double)RTT.get(i)/contRespostas; 
+		}
+		//System.out.println("Media RTT: "+ mediaRTT);
+		if(contRespostas>1){
+			for ( int i =0; i< contRespostas; i++){
+				desvioPadraoRTT += Math.pow((double)(RTT.get(i) - mediaRTT), 2)/(contRespostas-1);
 			}
-			
-		}
-		for ( int i =0; i< contRespostas; i++){
-			mediaRTT += (double)RTT[i]/contRespostas; 
-		}
-		for ( int i =0; i< contRespostas; i++){
-			desvioPadraoRTT += Math.pow((double)(RTT[i] - mediaRTT), 2)/contRespostas;
 			desvioPadraoRTT = Math.sqrt(desvioPadraoRTT);
 		}
+		else{
+			desvioPadraoRTT = 0;
+		}
+				
+		//System.out.println("Desvio Padrao RTT: "+ desvioPadraoRTT);
 		RTTMax= mediaRTT + desvioPadraoRTT;
 		
 		return (int)RTTMax;
