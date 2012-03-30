@@ -69,6 +69,9 @@ public class Escravo extends Processo implements Runnable {
 		
 	}
 	public void update(){
+		updateEleicaoMestre();
+	}
+	public void updateEleicaoMestre(){
 		//Verifica se a eleicao ainda está ocorrendo, se estiver: eleicao acaba, e o mestre é consagrado.
 		if(eleicaoOcorrendo && System.currentTimeMillis() > tempoInicioEleicao + tempoEleicao){
 			eleicaoOcorrendo = false;
@@ -92,6 +95,7 @@ public class Escravo extends Processo implements Runnable {
 			//Variáveis são reiniciadas.
 			iniciaVariaveis();
 		}
+		
 	}
 	//Verifica as os tipos de mensagem que chegam.
 	public void processaMensagem(DatagramPacket dp) throws IOException{
@@ -110,18 +114,25 @@ public class Escravo extends Processo implements Runnable {
 			case Comunicacao.RECONHECIMENTO:
 				break;
 			case Comunicacao.ELEICAO:
-				//Verifica se a ID da mensagem de eleição que chegou é maior ou igual a sua. Se for
-				//armazena o id do novo mestre como sendo o ID da mensagem que chegou.
-				if(Integer.parseInt(msg[Comunicacao.INDEX_ID]) > idNovoMestre ){
-					idNovoMestre = Integer.parseInt(msg[Comunicacao.INDEX_ID]);
-				}
+				verificaEleicao(msg);
 				break;
 			case Comunicacao.CALC_RTT_MAX:
-				//Envia mensagem para o mestre para isso utiliza o Ip do mestre e seu Id (ID calcula a porta do mestre).
-				//O conteudo da msg informa que o tipo é de CALC RTT MAX e a ID desse processo escravo.
-				uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.CALC_RTT_MAX, ID));
+				enviaMsgEleicao();
 				break;
-			
 		}
+	}
+	public void verificaEleicao(String msg[]){
+		//Verifica se a ID da mensagem de eleição que chegou é maior ou igual a sua. Se for
+		//armazena o id do novo mestre como sendo o ID da mensagem que chegou.
+		if(Integer.parseInt(msg[Comunicacao.INDEX_ID]) > idNovoMestre ){
+			idNovoMestre = Integer.parseInt(msg[Comunicacao.INDEX_ID]);
+		}
+		
+	}
+	public void enviaMsgEleicao() throws IOException{
+		//Envia mensagem para o mestre para isso utiliza o Ip do mestre e seu Id (ID calcula a porta do mestre).
+		//O conteudo da msg informa que o tipo é de CALC RTT MAX e a ID desse processo escravo.
+		uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.CALC_RTT_MAX, ID));
+		
 	}
 }
