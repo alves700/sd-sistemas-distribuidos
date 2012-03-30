@@ -15,11 +15,10 @@ public abstract class Conection  extends Thread{
 	protected final int tamByte = 1000;
 	protected int port;
 	
-	public synchronized void recebeMsg() throws InterruptedException, IOException{
+	public synchronized void recebeMsg() throws IOException{
         byte[] buffer = new byte[1000];
                 // get messages from others in group
         DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-        Thread.sleep(1);
         getSocket().receive(messageIn);
         inBuffer.add(messageIn);
       
@@ -67,9 +66,6 @@ public abstract class Conection  extends Thread{
             if ( isConnected){
                 try {
 					recebeMsg();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
