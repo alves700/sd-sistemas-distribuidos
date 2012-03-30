@@ -58,7 +58,7 @@ public class Processo extends Thread{
 		}	
 	}
 	public void iniciaProcesso() throws InterruptedException, IOException{
-;
+
 		comm.reconheceOutrosProcessos(ID);
 		System.out.println("Termino do Reconhecimento");
 		
