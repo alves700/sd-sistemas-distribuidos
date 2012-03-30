@@ -88,10 +88,10 @@ public class Processo extends Thread{
 	 	}
 	}
 	public void verficaBufferEntrada() throws IOException{
-		if (mc.existeMsg()){
+		while (mc.existeMsg()){
 			processaMensagem(mc.getDatagram());
 		}
-		if (uc.existeMsg()){
+		while (uc.existeMsg()){
 			processaMensagem(uc.getDatagram());
 		}
 	}
