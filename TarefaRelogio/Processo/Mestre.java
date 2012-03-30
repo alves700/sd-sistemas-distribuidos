@@ -17,11 +17,11 @@ public class Mestre extends Processo{
 	
 	private final long tempoEsperaRTT = 1000;//Espera por 1s o RTT de outros escravos
 	private final long tempoReqRTT = 3000;//Recalcula o RTT de 3 em 3 segundos.
-	
 	private boolean requerindoRTT = false;//True quando mestre requisita RTT, modificada para false quando RTT é calculado. 
-	
 	private long ultimoReqRTTEnviado; //"Horário" em que ocorreu a ultima requisição de RTT, também é utilizada para o cálculo do RTT de um processo. 
 	
+	private final long tempoReqRelogio = 10000;//Tempo entre um requerimento e outro do relógio
+	private long ultimoReqRelogioEnviado = 0;
 	ArrayList <Integer> RTT = new ArrayList <Integer>(); // ArrayList que armazena os RTTs dos processos.
 	
 	public Mestre() throws IOException {
@@ -58,6 +58,7 @@ public class Mestre extends Processo{
 	public void envioDeMensagens() throws IOException{
 		enviaHello();
 		enviaReqRTT();
+		enviaReqRelogio();
 	}
 	private void enviaHello(){
 		//Envio de Hello periodicamente.
@@ -78,6 +79,13 @@ public class Mestre extends Processo{
 			mc.enviaMsg(comm.protMsg(Comunicacao.CALC_RTT_MAX,ID));
 			ultimoReqRTTEnviado = System.currentTimeMillis();
 			requerindoRTT = true;
+		}
+	}
+	private void enviaReqRelogio() throws IOException{
+		//Envio de mensagem para requisição de relógios
+		if(System.currentTimeMillis() > ultimoReqRelogioEnviado + tempoReqRelogio){
+			mc.enviaMsg(comm.protMsg(Comunicacao.REQ_RELOGIO,ID));
+			ultimoReqRelogioEnviado = System.currentTimeMillis();
 		}
 	}
 	public void update() throws IOException{
