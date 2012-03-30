@@ -56,6 +56,10 @@ public class Mestre extends Processo{
 	
 	}
 	public void envioDeMensagens() throws IOException{
+		enviaHello();
+		enviaReqRTT();
+	}
+	private void enviaHello(){
 		//Envio de Hello periodicamente.
 		if(System.currentTimeMillis() > ultimoHelloEnviado + tempoEnvioHello){
 			try {
@@ -66,6 +70,8 @@ public class Mestre extends Processo{
 			}
 			ultimoHelloEnviado = System.currentTimeMillis();
 		}
+	}
+	private void enviaReqRTT() throws IOException{
 		//Envio de requisição troca de mensagens para cálculo de RTT.
 		if(System.currentTimeMillis() > ultimoReqRTTEnviado + tempoReqRTT){
 			
@@ -73,10 +79,13 @@ public class Mestre extends Processo{
 			ultimoReqRTTEnviado = System.currentTimeMillis();
 			requerindoRTT = true;
 		}
-		
 	}
 	public void update() throws IOException{
 		
+		updateRTT();
+		
+	}
+	private void updateRTT() throws IOException{
 		// Cálcula o RTT máximo após o tempoEsperaRTT ter passado.
 		if(requerindoRTT && System.currentTimeMillis() > ultimoReqRTTEnviado + tempoEsperaRTT){
 			
@@ -106,14 +115,17 @@ public class Mestre extends Processo{
 				//System.exit(0);
 				break;
 			case Comunicacao.CALC_RTT_MAX:
-				//Caso recebeu msg de Calc de RTT Max que não seja de si mesmo, e está requerindo RTT's adiciona o tempo de RTT na lista. 
-				if(requerindoRTT && Integer.parseInt(msg [Comunicacao.INDEX_ID]) != ID){
-					int rttt = (int) (System.currentTimeMillis()-ultimoReqRTTEnviado);
-					System.out.println("Msg de ID: " +  msg[Comunicacao.INDEX_ID]+" Seu RTT: "+rttt);
-					RTT.add(rttt);
-				}
+				addRTT(msg);
 				break;
 			
+		}
+	}
+	private void addRTT(String msg[]){
+		//Caso recebeu msg de Calc de RTT Max que não seja de si mesmo, e está requerindo RTT's adiciona o tempo de RTT na lista. 
+		if(requerindoRTT && Integer.parseInt(msg [Comunicacao.INDEX_ID]) != ID){
+			int rttt = (int) (System.currentTimeMillis()-ultimoReqRTTEnviado);
+			System.out.println("Msg de ID: " +  msg[Comunicacao.INDEX_ID]+" Seu RTT: "+rttt);
+			RTT.add(rttt);
 		}
 	}
 	public int calculaRTTmax() throws IOException{

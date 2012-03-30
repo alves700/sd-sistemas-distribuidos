@@ -61,16 +61,12 @@ public class Escravo extends Processo implements Runnable {
 		}
 		
 	}
-	public void envioDeMensagens(){
+	public void envioDeMensagens() throws IOException{
 		//Verifica quando foi a ultima vez que recebeu um hello, caso o tempo seja ultrapassado, inicia eleição.
 		if(System.currentTimeMillis() > ultimoHelloRecebido + tempoEsperaHello){
-			try {
 				eleicao();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}	
+		}
+		
 	}
 	public void update(){
 		//Verifica se a eleicao ainda está ocorrendo, se estiver: eleicao acaba, e o mestre é consagrado.
