@@ -126,7 +126,7 @@ public class Mestre extends Processo{
 			
 			if(Long.parseLong(rel[indRTT]) <= RTTMax){
 				media += (Long.parseLong(rel[indREL]) + Long.parseLong(rel[indRTT])/2);
-				System.out.println("tempo ms:"+ rel[indREL]+" RTT:"+Long.parseLong(rel[indRTT])/2);
+				//System.out.println("tempo ms:"+ rel[indREL]+" RTT:"+Long.parseLong(rel[indRTT])/2);
 				numRelogios++;
 			}
 		}
