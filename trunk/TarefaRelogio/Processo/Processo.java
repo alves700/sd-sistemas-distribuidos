@@ -1,6 +1,8 @@
 package Processo;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 
 import Comunicação.*;
@@ -96,5 +98,49 @@ public class Processo extends Thread{
 		}
 	}
 	public void processaMensagem(DatagramPacket dp) throws IOException{
+	}
+	public long convertHoursMillis(String horario){
+		 String [] c = horario.split(":");
+		 
+         long mills = Long.parseLong(c[0])*60*60*1000; //Horas convertidos em millis
+         mills +=  Long.parseLong(c[1])*60*1000; //Minutos convertidos em millis
+         String [] c2= c[2].split(","); 
+         mills += Long.parseLong(c2[0])*1000; //Segundos convertidos em millis
+         mills += Long.parseLong(c2[1])*10; // millis
+         
+         return mills;
+	}
+	public String converMillisHours(long mills){
+  
+        String format = String.format("%%0%dd", 2);
+        String milliseconds = String.format(format, (mills % 1000)/10);
+        mills = mills/ 1000;  
+        String seconds = String.format(format, mills % 60);  
+        String minutes = String.format(format, (mills % 3600) / 60);  
+        String hours = String.format(format, mills/ 3600);  
+        String time =  hours + ":" + minutes + ":" + seconds+","+milliseconds;
+        
+        return time;
+	}
+	public String getHorario() throws IOException{
+		 String[] command =  new String[3];
+         command[0] = "cmd";
+         command[1] = "/C";
+         command[2] = "time";//path of the compiler
+
+         Process p = Runtime.getRuntime().exec(command);
+         BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+         String s = stdInput.readLine();
+         s = (String) s.subSequence(12, s.length());
+         return s;
+        
+	}
+	public void setHorario(String horario) throws IOException{
+		String[] command =  new String[3];
+        command[0] = "cmd";
+        command[1] = "/C";
+        command[2] = "time "+horario;//path of the compiler
+
+        Process p = Runtime.getRuntime().exec(command);
 	}
 }
