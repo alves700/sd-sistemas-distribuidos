@@ -25,9 +25,9 @@ public class Mestre extends Processo{
 	//Variáveis que controlam a requisição de relógio
 	private final long tempoReqRelogio = 10000;//Tempo entre um requerimento e outro do relógio
 	private boolean requerindoRelogio = false;
-	private long ultimoReqRelogioEnviado = 0; 
+	private long ultimoReqRelogioEnviado;
 	
-	ArrayList <String> relogios = new ArrayList <String>(); //ArryList que armazena os relogios recebidos por processos.
+	ArrayList <String> relogios = new ArrayList <String>(); //ArryList que armazena os relogios recebidos por processos e seus RTTs.
 	
 	
 	public Mestre() throws IOException {
@@ -35,8 +35,9 @@ public class Mestre extends Processo{
 	}
 	
 	public void iniciaVariaveis(){
-		ultimoHelloEnviado = System.currentTimeMillis();
-		ultimoReqRTTEnviado = System.currentTimeMillis();
+		ultimoHelloEnviado = 0;
+		ultimoReqRTTEnviado = 0;
+		ultimoReqRelogioEnviado  = 0;
 	}
 
 	@Override
@@ -152,7 +153,7 @@ public class Mestre extends Processo{
 	private void addRelogio(String msg[]) {
 		if(requerindoRelogio && Integer.parseInt(msg [Comunicacao.INDEX_ID]) != ID){
 			System.out.println(msg[2]);
-			relogios.add(msg[2]);
+			relogios.add(msg[2]+" "+ (System.currentTimeMillis()-ultimoReqRelogioEnviado));
 		}
 	}
 	private void addRTT(String msg[]){
