@@ -111,7 +111,7 @@ public class Escravo extends Processo implements Runnable {
 				enviaMsgRelogio();
 				break;
 			case Comunicacao.AJUSTE_RELOGIO:
-				
+				ajustaRelogio(msg);
 				break;
 			case Comunicacao.RECONHECIMENTO:
 				break;
@@ -123,6 +123,11 @@ public class Escravo extends Processo implements Runnable {
 				enviaMsgRTT();
 				break;
 		}
+	}
+	public void ajustaRelogio(String [] msg) throws IOException{
+		long ajuste = Long.parseLong(msg[Comunicacao.INDEX_MSG]);	
+		String horaAtual = getHorario(); 
+		setHorario(converMillisHours(convertHoursMillis(horaAtual)+ajuste));
 	}
 	public void verificaEleicao(String msg[]){
 		//Verifica se a ID da mensagem de eleição que chegou é maior ou igual a sua. Se for
@@ -141,6 +146,6 @@ public class Escravo extends Processo implements Runnable {
 	public void enviaMsgRelogio() throws IOException{
 		//Envia mensagem para o mestre para isso utiliza o Ip do mestre e seu Id (ID calcula a porta do mestre).
 		//O conteudo da msg informa que o tipo é de REQ_RELOGIO e a ID desse processo escravo, e o relógio.
-		uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.REQ_RELOGIO, ID, getHorario()));
+		uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.REQ_RELOGIO, ID, ""+convertHoursMillis(getHorario())));
 	}
 }
