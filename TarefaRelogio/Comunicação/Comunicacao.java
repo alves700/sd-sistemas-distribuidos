@@ -17,7 +17,7 @@ public class Comunicacao {
 	
 	public final static int HELLO = 0;
 	public final static int	REQ_RELOGIO = 1;
-	public final static int	RELOGIO = 2;
+	public final static int	AJUSTE_RELOGIO = 2;
 	public final static int	RECONHECIMENTO = 3;
 	public final static int	ELEICAO = 4;
 	public final static int	CALC_RTT_MAX = 5;

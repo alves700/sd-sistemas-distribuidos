@@ -18,11 +18,17 @@ public class Mestre extends Processo{
 	private final long tempoEsperaRTT = 1000;//Espera por 1s o RTT de outros escravos
 	private final long tempoReqRTT = 3000;//Recalcula o RTT de 3 em 3 segundos.
 	private boolean requerindoRTT = false;//True quando mestre requisita RTT, modificada para false quando RTT é calculado. 
-	private long ultimoReqRTTEnviado; //"Horário" em que ocorreu a ultima requisição de RTT, também é utilizada para o cálculo do RTT de um processo. 
+	private long ultimoReqRTTEnviado; //"Horário" em que ocorreu a ultima requisição de RTT, também é utilizada para o cálculo do RTT de um processo.
 	
-	private final long tempoReqRelogio = 10000;//Tempo entre um requerimento e outro do relógio
-	private long ultimoReqRelogioEnviado = 0;
 	ArrayList <Integer> RTT = new ArrayList <Integer>(); // ArrayList que armazena os RTTs dos processos.
+	
+	//Variáveis que controlam a requisição de relógio
+	private final long tempoReqRelogio = 10000;//Tempo entre um requerimento e outro do relógio
+	private boolean requerindoRelogio = false;
+	private long ultimoReqRelogioEnviado = 0; 
+	
+	ArrayList <String> relogios = new ArrayList <String>(); //ArryList que armazena os relogios recebidos por processos.
+	
 	
 	public Mestre() throws IOException {
 		System.out.println("Sou o Mestre.");
@@ -85,14 +91,28 @@ public class Mestre extends Processo{
 		//Envio de mensagem para requisição de relógios
 		if(System.currentTimeMillis() > ultimoReqRelogioEnviado + tempoReqRelogio){
 			mc.enviaMsg(comm.protMsg(Comunicacao.REQ_RELOGIO,ID));
+			requerindoRelogio = true;
 			ultimoReqRelogioEnviado = System.currentTimeMillis();
 		}
 	}
 	public void update() throws IOException{
-		
 		updateRTT();
+		updateRelogio();
+	}
+	public void updateRelogio(){
+		if(requerindoRelogio && System.currentTimeMillis() > ultimoReqRelogioEnviado + RTTMax){
+			requerindoRelogio =false;
+			calcNovoRelogio();
+			enviaNovoRelogio();
+		}
+	}
+	public void calcNovoRelogio(){
 		
 	}
+	public void enviaNovoRelogio(){
+		
+	}
+	
 	private void updateRTT() throws IOException{
 		// Cálcula o RTT máximo após o tempoEsperaRTT ter passado.
 		if(requerindoRTT && System.currentTimeMillis() > ultimoReqRTTEnviado + tempoEsperaRTT){
@@ -105,15 +125,16 @@ public class Mestre extends Processo{
 			
 		}
 	}
-	
+
 	public void processaMensagem(DatagramPacket dp){
 		String[] msg = mc.getMsg(dp).split(" ");
 		 
 		switch( Integer.parseInt(msg[Comunicacao.INDEX_TIPO]) ){
 
 			case Comunicacao.REQ_RELOGIO:
+				addRelogio(msg);
 				break;
-			case Comunicacao.RELOGIO:
+			case Comunicacao.AJUSTE_RELOGIO:
 				break;
 			case Comunicacao.RECONHECIMENTO:
 				break;
@@ -128,11 +149,17 @@ public class Mestre extends Processo{
 			
 		}
 	}
+	private void addRelogio(String msg[]) {
+		if(requerindoRelogio && Integer.parseInt(msg [Comunicacao.INDEX_ID]) != ID){
+			System.out.println(msg[2]);
+			relogios.add(msg[2]);
+		}
+	}
 	private void addRTT(String msg[]){
 		//Caso recebeu msg de Calc de RTT Max que não seja de si mesmo, e está requerindo RTT's adiciona o tempo de RTT na lista. 
 		if(requerindoRTT && Integer.parseInt(msg [Comunicacao.INDEX_ID]) != ID){
 			int rttt = (int) (System.currentTimeMillis()-ultimoReqRTTEnviado);
-			System.out.println("Msg de ID: " +  msg[Comunicacao.INDEX_ID]+" Seu RTT: "+rttt);
+			//System.out.println("Msg de ID: " +  msg[Comunicacao.INDEX_ID]+" Seu RTT: "+rttt);
 			RTT.add(rttt);
 		}
 	}

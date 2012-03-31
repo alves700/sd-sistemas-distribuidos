@@ -141,6 +141,6 @@ public class Processo extends Thread{
         command[1] = "/C";
         command[2] = "time "+horario;//path of the compiler
 
-        Process p = Runtime.getRuntime().exec(command);
+        Runtime.getRuntime().exec(command);
 	}
 }
