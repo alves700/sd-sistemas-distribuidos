@@ -113,6 +113,7 @@ public class Mestre extends Processo{
 			requerindoRelogio =false;
 			long media = calcNovoRelogio();
 			ajusteNovoRelogio(media);
+			relogios.clear();
 		}
 	}
 	public long calcNovoRelogio(){
@@ -122,7 +123,7 @@ public class Mestre extends Processo{
 		
 		for(int i = 0 ; i< relogios.size();i++){
 			String [] rel = relogios.get(i).split(" ");
-			if(Long.parseLong(rel[indRTT]) < RTTMax){
+			if(Long.parseLong(rel[indRTT]) <= RTTMax){
 				estimado[numRelogios] = Long.parseLong(rel[indREL]) + Long.parseLong(rel[indRTT])/2;
 				media += estimado[i];
 				numRelogios++;
