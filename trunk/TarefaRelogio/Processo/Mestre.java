@@ -117,29 +117,33 @@ public class Mestre extends Processo{
 		}
 	}
 	public long calcNovoRelogio(){
-		long [] estimado = new long [relogios.size()];
 		int numRelogios = 0;
 		long media = 0;
 		
 		for(int i = 0 ; i< relogios.size();i++){
+			
 			String [] rel = relogios.get(i).split(" ");
+			
 			if(Long.parseLong(rel[indRTT]) <= RTTMax){
-				estimado[numRelogios] = Long.parseLong(rel[indREL]) + Long.parseLong(rel[indRTT])/2;
-				media += estimado[i];
+				media += Long.parseLong(rel[indREL]) + Long.parseLong(rel[indRTT])/2;
 				numRelogios++;
 			}
 		}
+		
 		media = media/numRelogios;
 		System.out.println("Numero de processos que participaram do Algoritmo de Berkeley: "+numRelogios);
 		return media;
 	}
 	public void ajusteNovoRelogio(long media) throws NumberFormatException, IOException{
 		for(int i = 0 ; i< relogios.size();i++){
+			
 			String [] rel = relogios.get(i).split(" ");
+			
 			if(Long.parseLong(rel[indID]) != ID){
 				long ajuste =  media- Long.parseLong(rel[indREL]);
 				uc.enviaMsg(rel[indIP], Integer.parseInt(rel[indID]), comm.protMsg(Comunicacao.AJUSTE_RELOGIO, ID, ""+ajuste));
 			}
+			
 			else{
 				long ajuste =  media- Long.parseLong(rel[indREL]);
 				System.out.println("Novo ajuste feito de: "+ajuste+"ms do tempo atual");
@@ -147,7 +151,6 @@ public class Mestre extends Processo{
 				String horaAtual = getHorario(); 
 				setHorario(converMillisHours(convertHoursMillis(horaAtual)+ajuste));
 			}
-			
 		}
 	}
 	
