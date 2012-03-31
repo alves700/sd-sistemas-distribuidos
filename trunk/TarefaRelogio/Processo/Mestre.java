@@ -124,13 +124,11 @@ public class Mestre extends Processo{
 			String [] rel = relogios.get(i).split(" ");
 			if(Long.parseLong(rel[indRTT]) < RTTMax){
 				estimado[numRelogios] = Long.parseLong(rel[indREL]) + Long.parseLong(rel[indRTT])/2;
+				media += estimado[i];
 				numRelogios++;
 			}
 		}
-		for(int i = 0 ; i<numRelogios ; i++){
-			media += estimado[i]; 
-		}
-		media /= 4;
+		media = media/numRelogios;
 		return media;
 	}
 	public void ajusteNovoRelogio(long media) throws NumberFormatException, IOException{
@@ -141,7 +139,7 @@ public class Mestre extends Processo{
 				uc.enviaMsg(rel[indIP], Integer.parseInt(rel[indID]), comm.protMsg(Comunicacao.AJUSTE_RELOGIO, ID, ""+ajuste));
 			}
 			else{
-				setHorario(converMillisHours(media)); //!!! Ver se não precisa utilizar o relógio previamente para ajustar o próprio relógio. !!!
+				setHorario(converMillisHours(media)); //!!! Ver se não precisa utilizar o relógio atual para ajustar o próprio relógio. !!!
 			}
 			
 		}
