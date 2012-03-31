@@ -16,13 +16,15 @@ public class Timer {
 		  String[] command =  new String[3];
           command[0] = "cmd";
           command[1] = "/C";
-          command[2] = "time";//path of the compiler
-
+          command[2] = "time 13:10:12,13";//path of the compiler
+          
+          
           Process p = Runtime.getRuntime().exec(command);
-          BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-          String s = stdInput.readLine();
-          s = (String) s.subSequence(12, s.length());
           System.out.println(System.currentTimeMillis()- tempo);
+          //BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+          //String s = stdInput.readLine();
+          //s = (String) s.subSequence(12, s.length());
+          
           
           
           /*

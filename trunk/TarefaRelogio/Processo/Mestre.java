@@ -24,10 +24,17 @@ public class Mestre extends Processo{
 	
 	//Variáveis que controlam a requisição de relógio
 	private final long tempoReqRelogio = 10000;//Tempo entre um requerimento e outro do relógio
+	private final long tempoEsperaRelogio = 1000;
 	private boolean requerindoRelogio = false;
 	private long ultimoReqRelogioEnviado;
 	
-	ArrayList <String> relogios = new ArrayList <String>(); //ArryList que armazena os relogios recebidos por processos e seus RTTs.
+	private final int indIP = 0;
+	private final int indID = 1;
+	private final int indREL = 2;
+	private final int indRTT = 3;
+	
+	
+	private ArrayList <String> relogios = new ArrayList <String>(); //ArryList que armazena IPs IDs e os relogios recebidos por processos e seus RTTs.
 	
 	
 	public Mestre() throws IOException {
@@ -93,6 +100,7 @@ public class Mestre extends Processo{
 		if(System.currentTimeMillis() > ultimoReqRelogioEnviado + tempoReqRelogio){
 			mc.enviaMsg(comm.protMsg(Comunicacao.REQ_RELOGIO,ID));
 			requerindoRelogio = true;
+			relogios.add(comm.getIP()+" "+ID+" "+convertHoursMillis(getHorario())+" "+0);
 			ultimoReqRelogioEnviado = System.currentTimeMillis();
 		}
 	}
@@ -100,18 +108,43 @@ public class Mestre extends Processo{
 		updateRTT();
 		updateRelogio();
 	}
-	public void updateRelogio(){
-		if(requerindoRelogio && System.currentTimeMillis() > ultimoReqRelogioEnviado + RTTMax){
+	public void updateRelogio() throws NumberFormatException, IOException{
+		if(requerindoRelogio && System.currentTimeMillis() > ultimoReqRelogioEnviado + tempoEsperaRelogio){
 			requerindoRelogio =false;
-			calcNovoRelogio();
-			enviaNovoRelogio();
+			long media = calcNovoRelogio();
+			ajusteNovoRelogio(media);
 		}
 	}
-	public void calcNovoRelogio(){
+	public long calcNovoRelogio(){
+		long [] estimado = new long [relogios.size()];
+		int numRelogios = 0;
+		long media = 0;
 		
+		for(int i = 0 ; i< relogios.size();i++){
+			String [] rel = relogios.get(i).split(" ");
+			if(Long.parseLong(rel[indRTT]) < RTTMax){
+				estimado[numRelogios] = Long.parseLong(rel[indREL]) + Long.parseLong(rel[indRTT])/2;
+				numRelogios++;
+			}
+		}
+		for(int i = 0 ; i<numRelogios ; i++){
+			media += estimado[i]; 
+		}
+		media /= 4;
+		return media;
 	}
-	public void enviaNovoRelogio(){
-		
+	public void ajusteNovoRelogio(long media) throws NumberFormatException, IOException{
+		for(int i = 0 ; i< relogios.size();i++){
+			String [] rel = relogios.get(i).split(" ");
+			if(Long.parseLong(rel[indID]) != ID){
+				long ajuste =  media- Long.parseLong(rel[indREL]);
+				uc.enviaMsg(rel[indIP], Integer.parseInt(rel[indID]), comm.protMsg(Comunicacao.AJUSTE_RELOGIO, ID, ""+ajuste));
+			}
+			else{
+				setHorario(converMillisHours(media)); //!!! Ver se não precisa utilizar o relógio previamente para ajustar o próprio relógio. !!!
+			}
+			
+		}
 	}
 	
 	private void updateRTT() throws IOException{
@@ -133,7 +166,7 @@ public class Mestre extends Processo{
 		switch( Integer.parseInt(msg[Comunicacao.INDEX_TIPO]) ){
 
 			case Comunicacao.REQ_RELOGIO:
-				addRelogio(msg);
+				addRelogio(dp, msg);
 				break;
 			case Comunicacao.AJUSTE_RELOGIO:
 				break;
@@ -150,10 +183,11 @@ public class Mestre extends Processo{
 			
 		}
 	}
-	private void addRelogio(String msg[]) {
+	private void addRelogio(DatagramPacket dp, String msg[]) {
 		if(requerindoRelogio && Integer.parseInt(msg [Comunicacao.INDEX_ID]) != ID){
 			System.out.println(msg[2]);
-			relogios.add(msg[2]+" "+ (System.currentTimeMillis()-ultimoReqRelogioEnviado));
+			long RTT = (System.currentTimeMillis()-ultimoReqRelogioEnviado);
+			relogios.add(mc.getIP(dp)+" "+msg [Comunicacao.INDEX_ID]+" "+msg[Comunicacao.INDEX_MSG]+" "+ RTT);//IP + ID + RELOGIO + RTT
 		}
 	}
 	private void addRTT(String msg[]){
