@@ -126,7 +126,7 @@ public class Escravo extends Processo implements Runnable {
 	}
 	public void ajustaRelogio(String [] msg) throws IOException{
 		long ajuste = Long.parseLong(msg[Comunicacao.INDEX_MSG]);
-		System.out.println(ajuste);
+		System.out.println("Novo ajuste feito de: "+ajuste+"ms do tempo atual");
 		String horaAtual = getHorario(); 
 		setHorario(converMillisHours(convertHoursMillis(horaAtual)+ajuste));
 	}

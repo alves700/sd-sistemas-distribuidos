@@ -140,7 +140,10 @@ public class Mestre extends Processo{
 				uc.enviaMsg(rel[indIP], Integer.parseInt(rel[indID]), comm.protMsg(Comunicacao.AJUSTE_RELOGIO, ID, ""+ajuste));
 			}
 			else{
-				setHorario(converMillisHours(media)); //!!! Ver se não precisa utilizar o relógio atual para ajustar o próprio relógio. !!!
+				long ajuste =  media- Long.parseLong(rel[indREL]);
+				System.out.println("Novo ajuste feito de: "+ajuste+"ms do tempo atual");
+				String horaAtual = getHorario(); 
+				setHorario(converMillisHours(convertHoursMillis(horaAtual)+ajuste));
 			}
 			
 		}
@@ -184,7 +187,6 @@ public class Mestre extends Processo{
 	}
 	private void addRelogio(DatagramPacket dp, String msg[]) {
 		if(requerindoRelogio && Integer.parseInt(msg [Comunicacao.INDEX_ID]) != ID){
-			System.out.println(msg[2]);
 			long RTT = (System.currentTimeMillis()-ultimoReqRelogioEnviado);
 			relogios.add(mc.getIP(dp)+" "+msg [Comunicacao.INDEX_ID]+" "+msg[Comunicacao.INDEX_MSG]+" "+ RTT);//IP + ID + RELOGIO + RTT
 		}
