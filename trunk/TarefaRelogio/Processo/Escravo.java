@@ -108,8 +108,10 @@ public class Escravo extends Processo implements Runnable {
 				ultimoHelloRecebido = System.currentTimeMillis();
 				break;
 			case Comunicacao.REQ_RELOGIO:
+				enviaMsgRelogio();
 				break;
-			case Comunicacao.RELOGIO:
+			case Comunicacao.AJUSTE_RELOGIO:
+				
 				break;
 			case Comunicacao.RECONHECIMENTO:
 				break;
@@ -117,7 +119,8 @@ public class Escravo extends Processo implements Runnable {
 				verificaEleicao(msg);
 				break;
 			case Comunicacao.CALC_RTT_MAX:
-				enviaMsgEleicao();
+				getHorario(); //(Necessário, pois essa operação será feita quando o mestre pedir o horário, e ela demora 15ms no mínimo ¬¬).
+				enviaMsgRTT();
 				break;
 		}
 	}
@@ -129,10 +132,15 @@ public class Escravo extends Processo implements Runnable {
 		}
 		
 	}
-	public void enviaMsgEleicao() throws IOException{
+	public void enviaMsgRTT() throws IOException{
 		//Envia mensagem para o mestre para isso utiliza o Ip do mestre e seu Id (ID calcula a porta do mestre).
 		//O conteudo da msg informa que o tipo é de CALC RTT MAX e a ID desse processo escravo.
 		uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.CALC_RTT_MAX, ID));
 		
+	}
+	public void enviaMsgRelogio() throws IOException{
+		//Envia mensagem para o mestre para isso utiliza o Ip do mestre e seu Id (ID calcula a porta do mestre).
+		//O conteudo da msg informa que o tipo é de REQ_RELOGIO e a ID desse processo escravo, e o relógio.
+		uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.REQ_RELOGIO, ID, getHorario()));
 	}
 }

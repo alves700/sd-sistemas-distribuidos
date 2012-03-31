@@ -12,6 +12,7 @@ public class Timer {
 		
 	  try
       {
+		  long tempo = System.currentTimeMillis();
 		  String[] command =  new String[3];
           command[0] = "cmd";
           command[1] = "/C";
@@ -21,21 +22,37 @@ public class Timer {
           BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
           String s = stdInput.readLine();
           s = (String) s.subSequence(12, s.length());
+          System.out.println(System.currentTimeMillis()- tempo);
+          
+          
+          /*
           System.out.println(s);
           String [] c = s.split(":");
           
-          for(int i = 0 ; i < c.length-1;i++){
-        	  System.out.println(c[i]);
-          }
+     
+          long mills = Long.parseLong(c[0])*60*60*1000; //Horas convertidos em millis
+          mills +=  Long.parseLong(c[1])*60*1000; //Minutos convertidos em millis
+          String [] c2= c[2].split(","); 
+          mills += Long.parseLong(c2[0])*1000; //Segundos convertidos em millis
+          mills += Long.parseLong(c2[1])*10; // millis
           
-          long mills = Long.parseLong(c[0])*60*60*1000;
-          mills +=  Long.parseLong(c[1])*60*1000;
-          //c2 = c[2].split(",");
-          //mills += 
+          System.out.println(c[0]);
+          System.out.println(c[1]);
+          System.out.println(c2[0]);
+          System.out.println(c2[1]);
+          System.out.println(mills);
           
-	          
-
-	          
+          long elapsedTime = mills;  
+          String format = String.format("%%0%dd", 2);
+          String milliseconds = String.format(format, (elapsedTime % 1000)/10);
+          System.out.println(milliseconds);
+          elapsedTime = elapsedTime/ 1000;  
+          String seconds = String.format(format, elapsedTime % 60);  
+          String minutes = String.format(format, (elapsedTime % 3600) / 60);  
+          String hours = String.format(format, elapsedTime / 3600);  
+          String time =  hours + ":" + minutes + ":" + seconds+","+milliseconds;
+          System.out.println(time);
+		*/
       }
     catch(Exception e){  
                 System.out.println("I am In catch");
