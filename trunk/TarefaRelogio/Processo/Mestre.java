@@ -16,14 +16,14 @@ public class Mestre extends Processo{
 	private int RTTMax = 0;
 	
 	private final long tempoEsperaRTT = 1000;//Espera por 1s o RTT de outros escravos
-	private final long tempoReqRTT = 3000;//Recalcula o RTT de 3 em 3 segundos.
+	private final long tempoReqRTT = 20000;//Recalcula o RTT de 20 em 20 segundos.
 	private boolean requerindoRTT = false;//True quando mestre requisita RTT, modificada para false quando RTT é calculado. 
 	private long ultimoReqRTTEnviado; //"Horário" em que ocorreu a ultima requisição de RTT, também é utilizada para o cálculo do RTT de um processo.
 	
 	ArrayList <Integer> RTT = new ArrayList <Integer>(); // ArrayList que armazena os RTTs dos processos.
 	
 	//Variáveis que controlam a requisição de relógio
-	private final long tempoReqRelogio = 10000;//Tempo entre um requerimento e outro do relógio
+	private final long tempoReqRelogio = 5000;//Tempo entre um requerimento e outro do relógio
 	private final long tempoEsperaRelogio = 1000;
 	private boolean requerindoRelogio = false;
 	private long ultimoReqRelogioEnviado;
