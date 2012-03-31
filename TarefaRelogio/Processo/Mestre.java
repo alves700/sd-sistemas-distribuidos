@@ -130,6 +130,7 @@ public class Mestre extends Processo{
 			}
 		}
 		media = media/numRelogios;
+		System.out.println("Numero de processos que participaram do Algoritmo de Berkeley: "+numRelogios);
 		return media;
 	}
 	public void ajusteNovoRelogio(long media) throws NumberFormatException, IOException{
@@ -142,6 +143,7 @@ public class Mestre extends Processo{
 			else{
 				long ajuste =  media- Long.parseLong(rel[indREL]);
 				System.out.println("Novo ajuste feito de: "+ajuste+"ms do tempo atual");
+				
 				String horaAtual = getHorario(); 
 				setHorario(converMillisHours(convertHoursMillis(horaAtual)+ajuste));
 			}
