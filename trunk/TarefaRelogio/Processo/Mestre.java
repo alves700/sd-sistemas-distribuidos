@@ -8,6 +8,10 @@ import Comunicação.Comunicacao;
 
 public class Mestre extends Processo{
 	
+	//chavesDeCritografia
+	private String chavePrivada;
+	private String chavePublica;
+	
 	//Variáveis do mestre.
 	private final long tempoEnvioHello = 1000;
 	private long ultimoHelloEnviado;
@@ -39,8 +43,13 @@ public class Mestre extends Processo{
 	
 	public Mestre() throws IOException {
 		System.out.println("Sou o Mestre.");
+		geraChaves();
+	}
+	public void geraChaves(){
+		
 	}
 	
+
 	public void iniciaVariaveis(){
 		ultimoHelloEnviado = 0;
 		ultimoReqRTTEnviado = 0;
@@ -49,41 +58,37 @@ public class Mestre extends Processo{
 
 	@Override
 	public void run() {
-		iniciaVariaveis();
-		while(true){
-			try {
-				
-				envioDeMensagens();
-				verficaBufferEntrada();
-				update();
-			
-				Thread.sleep(1);
-				
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		try {
+			iniciaVariaveis();
+			enviaChavePublica();
+			while(true){
+					envioDeMensagens();
+					verficaBufferEntrada();
+					update();
+					Thread.sleep(1);
 			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	
+	}
+	public void enviaChavePublica() throws IOException{
+		   mc.enviaMsg(comm.protMsg(Comunicacao.CHAVE_PUB,ID, chavePublica));
 	}
 	public void envioDeMensagens() throws IOException{
 		enviaHello();
 		enviaReqRTT();
 		enviaReqRelogio();
 	}
-	private void enviaHello(){
+	private void enviaHello() throws IOException{
 		//Envio de Hello periodicamente.
 		if(System.currentTimeMillis() > ultimoHelloEnviado + tempoEnvioHello){
-			try {
-				mc.enviaMsg(comm.protMsg(Comunicacao.HELLO,ID));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			ultimoHelloEnviado = System.currentTimeMillis();
+		   mc.enviaMsg(comm.protMsg(Comunicacao.HELLO,ID));
+		   ultimoHelloEnviado = System.currentTimeMillis();
 		}
 	}
 	private void enviaReqRTT() throws IOException{
@@ -142,9 +147,9 @@ public class Mestre extends Processo{
 			
 			if(Long.parseLong(rel[indID]) != ID){
 				long ajuste =  media- Long.parseLong(rel[indREL]);
-				uc.enviaMsg(rel[indIP], Integer.parseInt(rel[indID]), comm.protMsg(Comunicacao.AJUSTE_RELOGIO, ID, ""+ajuste));
+				String msg = criptografa(""+ ID +" "+ajuste, chavePrivada);//Criptografa o ID junto com a msg
+				uc.enviaMsg(rel[indIP], Integer.parseInt(rel[indID]), ""+ Comunicacao.AJUSTE_RELOGIO +" "+  msg);// naum usei o protMSG pq o ID esta junto com a msg critografada
 			}
-			
 			else{
 				long ajuste =  media- Long.parseLong(rel[indREL]);
 				System.out.println("Novo ajuste feito de: "+ajuste+"ms do tempo atual");
@@ -175,15 +180,6 @@ public class Mestre extends Processo{
 
 			case Comunicacao.REQ_RELOGIO:
 				addRelogio(dp, msg);
-				break;
-			case Comunicacao.AJUSTE_RELOGIO:
-				break;
-			case Comunicacao.RECONHECIMENTO:
-				break;
-			case Comunicacao.ELEICAO:
-				// Caso recebeu mensagem de eleição é pq o tempo limite para hello estourou em pelo menos 
-				// um processo, então mestre se mata.
-				//System.exit(0);
 				break;
 			case Comunicacao.CALC_RTT_MAX:
 				addRTT(msg);
@@ -233,5 +229,9 @@ public class Mestre extends Processo{
 		RTTMax= mediaRTT + desvioPadraoRTT;
 		
 		return (int)RTTMax;
+	}
+	public String criptografa(String msg, String chave){
+		//implementar CRITOGRAFIA
+		return msg;
 	}
 }
