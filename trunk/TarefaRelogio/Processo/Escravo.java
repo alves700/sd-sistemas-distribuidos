@@ -5,7 +5,7 @@ import java.net.DatagramPacket;
 
 import Comunicação.Comunicacao;
 
-public class Escravo extends Processo implements Runnable {
+public class Escravo extends Processo{
 	
 	//chavesDeCriptografia public do mestre
 	private String chavePublicaMestre;
