@@ -25,7 +25,6 @@ public class Unicast extends Conection{
 		isConnected = true;
 		inBuffer = new ArrayList<DatagramPacket>();
 	}
-	// Dado um endereço configurado e uma porta envia a mensagem para esse endereço e porta.
 	/** 
 	Dado um endereço IP e uma porta envia uma mensagem para esse endereço e porta.
 	@param ip - IP de destino.
