@@ -5,6 +5,9 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
+/** 
+Classe responsável pela comunicação dos processos. Instancia tipos de conexão tanto multicast como unicast.
+*/  
 public class Comunicacao {
 	
 	//Para as mensagens enviadas/recebidas.
@@ -15,6 +18,7 @@ public class Comunicacao {
 	//Para ambos.
 	public final static int INDEX_ID = 1;
 	
+	//Tipos de mensagens trocadas entre processos.
 	public final static int HELLO = 0;
 	public final static int	REQ_RELOGIO = 1;
 	public final static int	AJUSTE_RELOGIO = 2;
@@ -27,15 +31,19 @@ public class Comunicacao {
 	private ArrayList<String[]> contatos;
 	
 	
-	private String meuIP;
-	private int meuID;
+	private String IP;
+	private int ID;
+	
 	// Duracao de reconhecimento de PC's = 10s
 	private final long tempoReconhecimento = 10000;
 	
 	private Unicast uc;
 	private Multicast mc;
 	
-	
+	/** 
+	Objetos das classes Unicast e Multicast são instanciados e iniciados.
+	@param id - ID do processo que instanciou objeto dessa classe.
+	*/ 
 	public Comunicacao(int id) throws IOException{
 		
 		contatos = new ArrayList<String[]>();
@@ -43,7 +51,7 @@ public class Comunicacao {
 		//Armazena seu próprio IP da rede.
 		
 		InetAddress address = InetAddress.getLocalHost();
-		meuIP = address.getHostAddress();
+		IP = address.getHostAddress();
 		 
 		mc = new Multicast();
 		mc.joinMulticast();
@@ -52,12 +60,62 @@ public class Comunicacao {
 		uc = new Unicast(id);
 		uc.start();
 		
-		meuID = id;
-		System.out.println("IP da máquina: " + meuIP +"    ID da máquina: " + id);
+		ID = id;
+		System.out.println("IP da máquina: " + IP +"    ID da máquina: " + id);
 	}
-	// Método iniciado pelo Processo para reconhecer os processos vizinhos, não sei como fazer esse método para funcionar
-	// tudo no mesmo PC, estou fazendo com q ele funcione somente em PC's diferentes. Testes realizados em 2 PC's diferentes.
-	public void reconheceOutrosProcessos(int ID) throws InterruptedException, IOException{
+	/** 
+	@return Objeto ArrayList contendo a lista de contatos.
+	*/
+	public ArrayList<String[]> getContatos() {
+		return contatos;
+	}
+	
+	/** 
+	@return String contendo o IP do computador.
+	*/
+	public String getIP(){
+		return IP;
+	}
+	
+	/** 
+	@return Objeto Multicast instanciado por essa classe.
+	*/
+	public Multicast getMulticast(){
+		return mc;
+	}
+	
+	/** 
+	@return Objeto Unicast instanciado por essa classe.
+	*/
+	public Unicast getUnicast(){
+		return uc;
+	}
+
+	/** 
+	Retorna mensagens de comunicação entre processos.
+	@param tipo - tipo da mensagem.
+	@param ID - ID do processo que enviou a mensagem.
+	@param msg - conteúdo da mensagem.
+	@return String contendo a mensagem resultante.
+	*/ 
+	public String protMsg(int tipo, int ID, String msg){
+		return ""+ tipo + " " + ID + " " + msg;
+	}
+	
+	/** 
+	Retorna mensagens de comunicação entre processos.
+	@param tipo - tipo da mensagem.
+	@param ID - ID do processo que enviou a mensagem.
+	@return String contendo a mensagem resultante.
+	*/
+	public String protMsg(int tipo, int ID){
+		return ""+ tipo + " " + ID;
+	}
+	/** 
+	Reconhece os processos vizinhos (processos inciados em outros computadores situados na mesma rede) e armazena-os.
+	em uma lista de contatos.
+	*/ 
+	public void reconheceOutrosProcessos() throws InterruptedException, IOException{
 		long t1 = System.currentTimeMillis();
 		long t2 = System.currentTimeMillis();
 		
@@ -86,7 +144,7 @@ public class Comunicacao {
                 }
                 //Se processo não existir na tabela de processos, adiciona-o na lista e envia sua ID para esse processo adicioná-lo, dá mais
                 //tempoDeReconhecimento para o término do reconhecimento entre processos
-               if ( !processoExistente && Integer.parseInt(contato[INDEX_ID]) != meuID){
+               if ( !processoExistente && Integer.parseInt(contato[INDEX_ID]) != ID){
 					contatos.add(contato);
 					//System.out.println(contato[INDEX_IP] + " "+ contato[INDEX_MSG]);
 					mc.enviaMsg(protMsg(RECONHECIMENTO,ID));
@@ -100,26 +158,4 @@ public class Comunicacao {
 			t2 = System.currentTimeMillis();
 		}
 	}
-	//Mensagens que além do tipo e da ID uma outra informação é necessário utilizar outra informação
-	public String protMsg(int tipo, int ID, String msg){
-		return ""+ tipo + " " + ID + " " + msg;
-	}
-	//Mensagens que são definidas somente pelo tipo e pela ID do processo que enviou-a.
-	public String protMsg(int tipo, int ID){
-		return ""+ tipo + " " + ID;
-	}
-	
-	public Unicast getUnicast(){
-		return uc;
-	}
-	public Multicast getMulticast(){
-		return mc;
-	}
-	public ArrayList<String[]> getContatos() {
-		return contatos;
-	}
-	public String getIP(){
-		return meuIP;
-	}
-
 }
