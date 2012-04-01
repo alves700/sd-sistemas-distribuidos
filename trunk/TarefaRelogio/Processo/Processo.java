@@ -7,6 +7,10 @@ import java.net.DatagramPacket;
 
 import Comunicação.*;
 
+/** 
+Classe que possui o main, e além disso possui métodos do Processo. O processo é responsável pelo inicio de comunicações, 
+instancia mestre ou escravo, processamento de mensagens e ajuste de horários. 
+*/
 public class Processo extends Thread{
 	
 	protected Comunicacao comm;;
@@ -17,14 +21,19 @@ public class Processo extends Thread{
 	protected String ipMestre;
 	protected int ID;
 	
-	public Processo(){
-	}
+	/** 
+	Inicia a comunicação instanciando um objeto da classe Comunicação.java. ID é iniciada nesse método.
+	*/
 	public void iniciaComunicacao() throws IOException{
 		ID = (int) (Math.random()*40000)+1;
 		comm = new Comunicacao(ID);
 		mc = comm.getMulticast();
 		uc = comm.getUnicast();
 	}
+	/** 
+	Cria um objeto da classe Mestre repassando os atributos como: ID, Comunicações Unicast e Multicast para esse objeto.
+	@return Objeto da classe Mestre.
+	*/
 	public Mestre criaMestre() throws IOException{
 		Mestre m = new Mestre();
 		m.ID = this.ID;
@@ -33,6 +42,10 @@ public class Processo extends Thread{
 		m.uc = this.uc;
 		return m;
 	}
+	/** 
+	Cria um objeto da classe Escravo repassando os atributos como: ID, ID do mestre, IP do mestre , Comunicações Unicast e Multicast para esse objeto.
+	@return Objeto da classe Escravo.
+	*/
 	public Escravo criaEscravo() throws IOException{
 		Escravo e = new Escravo();
 		e.ID = this.ID;
@@ -43,7 +56,9 @@ public class Processo extends Thread{
 		e.ipMestre = this.ipMestre;
 		return e;
 	}
-	
+	/** 
+	Executa o método main, um processo é instanciado e iniciado.
+	*/
 	public static void main(String [] args) {
 		Processo p;
 		try {
@@ -59,6 +74,10 @@ public class Processo extends Thread{
 			e.printStackTrace();
 		}	
 	}
+	/** 
+	Inicia o processo, depois verifica os processos vizinhos e verifica quem possui maior ID. O processo que possui maior ID é o mestre
+	os outros são escravos. Caso esse processo seja mestre, instancia e inicia um objeto Mestre. Caso for escravo instancia e inicia um Objeto escravo.  
+	*/
 	public void iniciaProcesso() throws InterruptedException, IOException{
 
 		comm.reconheceOutrosProcessos();
@@ -89,6 +108,9 @@ public class Processo extends Thread{
 	 		e.start();
 	 	}
 	}
+	/** 
+	Verifica se há mensagens no buffer de entrada de ambas conexões (Multicast e Unicast).
+	*/
 	public void verficaBufferEntrada() throws IOException{
 		while (mc.existeMsg()){
 			processaMensagem(mc.getDatagram());
@@ -97,8 +119,17 @@ public class Processo extends Thread{
 			processaMensagem(uc.getDatagram());
 		}
 	}
+	/** 
+	Faz o processamento da mensagem recebida no buffer de entrada.
+	@param dp - DatagramPacket que contem o conteúdo e IP da mensagem recebida.
+	*/
 	public void processaMensagem(DatagramPacket dp) throws IOException{
 	}
+	/** 
+	Faz a conversão de um horário no formato String para millisegundos.
+	@param horario - String que possui o formato hh:mm:ss,xx onde xx indica centésimos de segundo.
+	@return o horário em millisegundos.
+	*/
 	public long convertHoursMillis(String horario){
 		 String [] c = horario.split(":");
 		 
@@ -110,6 +141,11 @@ public class Processo extends Thread{
          
          return mills;
 	}
+	/** 
+	Faz a conversão de um horário em millisegundos para um horário no formato String.
+	@param mills - o horário em millisegundos.
+	@return String que possui o formato hh:mm:ss,xx onde xx indica centésimos de segundo.
+	*/
 	public String converMillisHours(long mills){
   
         String format = String.format("%%0%dd", 2);
@@ -122,6 +158,10 @@ public class Processo extends Thread{
         
         return time;
 	}
+	/** 
+	Retorna o horário atual utilizando o comando time do cmd.
+	@return String que possui o formato hh:mm:ss,xx onde xx indica centésimos de segundo.
+	*/
 	public String getHorario() throws IOException{
 		 String[] command =  new String[3];
          command[0] = "cmd";
@@ -141,6 +181,10 @@ public class Processo extends Thread{
          return s;
         
 	}
+	/** 
+	Muda o horário atual utilizando o comando time do cmd.
+	@param horario - String que possui o formato hh:mm:ss,xx onde xx indica centésimos de segundo.
+	*/
 	public void setHorario(String horario) throws IOException{
 		String[] command =  new String[3];
         command[0] = "cmd";
