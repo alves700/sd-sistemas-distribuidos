@@ -26,12 +26,16 @@ public class Escravo extends Processo{
 		System.out.println("Sou um Escravo");
 	}
 	
-	
+	/** 
+	Inicia atributos de temporização
+	*/
 	public void iniciaVariaveis(){
 		ultimoHelloRecebido = System.currentTimeMillis();
 	}
 	
-	//Método de eleicao, escravo envia sua ID caso ela seja maior q a ID armazenada por mensagens de eleicoes passadas.
+	/** 
+	Escravo envia sua ID caso ela seja maior que a ID armazenada por mensagens de eleições passadas recebidas pelo escravo.
+	*/
 	public void eleicao() throws IOException{
 		if(!eleicaoOcorrendo){
 			tempoInicioEleicao = System.currentTimeMillis();
@@ -41,6 +45,10 @@ public class Escravo extends Processo{
 			}
 		}
 	}
+	/** 
+	Método principal da thread. Entra em loop onde envia mensagens tanto para mestres quanto para outros escravos (no processo de eleição),
+	verifica se há novas mensagens no buffer de entrada e verifica updates.  
+	*/
 	@Override
 	public void run(){
 		iniciaVariaveis();
@@ -65,16 +73,27 @@ public class Escravo extends Processo{
 		}
 		
 	}
+	/** 
+	Caso o mestre não está respondendo envia mensagem de Eleição para outros processos. Os outros envios de mensagem para o mestre ocorrem na própria
+	verificação de mensagens no buffer de entrada.
+	*/
 	public void envioDeMensagens() throws IOException{
 		//Verifica quando foi a ultima vez que recebeu um hello, caso o tempo seja ultrapassado, inicia eleição.
 		if(System.currentTimeMillis() > ultimoHelloRecebido + tempoEsperaHello){
-				eleicao();
+			eleicao();
 		}
 		
 	}
+	/** 
+	Verifica se há atualização do mestre após o término da eleição. Outras atualizações ocorrem na verificação do buffer de entrada. 
+	*/
 	public void update(){
 		updateEleicaoMestre();
 	}
+	/** 
+	Após o término da eleição verifica o ID do novo mestre. Se for o próprio processo, cria um objeto Mestre e inicia-o, logo após interrompe o próprio
+	processo escravo.
+	*/
 	public void updateEleicaoMestre(){
 		//Verifica se a eleicao ainda está ocorrendo, se estiver: eleicao acaba, e o mestre é consagrado.
 		if(eleicaoOcorrendo && System.currentTimeMillis() > tempoInicioEleicao + tempoEleicao){
@@ -101,7 +120,12 @@ public class Escravo extends Processo{
 		}
 		
 	}
-	//Verifica as os tipos de mensagem que chegam.
+	/** 
+	Verifica o tipo de mensagem que chegou via Unicast ou Multicast, logo após faz ou não atualização. 
+	Possíveis mensagens: Hello, Requisição de relógio, Ajuste de Relógio, Eleição, Cálculo do RTT máximo e de Envio de Chave Pública (pelo mestre). 
+	Essas mensagens chegam a partir de outros escravos ou do próprio mestre.
+	@param dp - DatagramPacket da mensagem que chegou.    
+	*/
 	public void processaMensagem(DatagramPacket dp) throws IOException{
 		String x = mc.getMsg(dp);
 		String msg[] = x.split(" ");
@@ -135,12 +159,21 @@ public class Escravo extends Processo{
 				chavePublicaMestre = msg[Comunicacao.INDEX_MSG]; //recebe chave publica do mestre e seta em seu atributo para utilizar na autenticação posteriormente
 		}
 	}
+	/** 
+	Faz ajuste do relógio do escravo.
+	@param msg - Mensagem contendo um valor em millisegundos de ajuste.    
+	*/
 	public void ajustaRelogio(String msg) throws IOException{
 		long ajuste = Long.parseLong(msg);
 		System.out.println("Novo ajuste feito de: "+ajuste+"ms do tempo atual");
 		String horaAtual = getHorario(); 
 		setHorario(converMillisHours(convertHoursMillis(horaAtual)+ajuste));
 	}
+	/** 
+	Verifica mensagens que chegam de outros processos e compara o ID da mensagem com o maior ID armazenado no processo de eleição. 
+	Faz a atualização do ID do novo mestre.
+	@param msg - Mensagem contendo um ID.    
+	*/
 	public void verificaEleicao(String msg[]){
 		//Verifica se a ID da mensagem de eleição que chegou é maior ou igual a sua. Se for
 		//armazena o id do novo mestre como sendo o ID da mensagem que chegou.
@@ -149,17 +182,29 @@ public class Escravo extends Processo{
 		}
 		
 	}
+	/** 
+	Envia mensagem do tipo Calculo do RTT máximo para o mestre via Unicast.    
+	*/
 	public void enviaMsgRTT() throws IOException{
 		//Envia mensagem para o mestre para isso utiliza o Ip do mestre e seu Id (ID calcula a porta do mestre).
 		//O conteudo da msg informa que o tipo é de CALC RTT MAX e a ID desse processo escravo.
 		uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.CALC_RTT_MAX, ID));
 		
 	}
+	/** 
+	Envia mensagem do tipo Requisição de Relógio o mestre via Unicast. A mensagem contém o relógio atual do escravo.    
+	*/
 	public void enviaMsgRelogio() throws IOException{
 		//Envia mensagem para o mestre para isso utiliza o Ip do mestre e seu Id (ID calcula a porta do mestre).
 		//O conteudo da msg informa que o tipo é de REQ_RELOGIO e a ID desse processo escravo, e o relógio.
 		uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.REQ_RELOGIO, ID, ""+convertHoursMillis(getHorario())));
 	}
+	/** 
+	Faz a descriptografia de uma mensagem através de uma chave.
+	@param msg - mensagem encriptografada.
+	@param chave - chave de descriptografia.
+	@return mensagem original.
+	*/
 	public String descriptografa(String msg, String chave){
 		return msg;
 	}
