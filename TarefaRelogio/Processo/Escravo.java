@@ -6,6 +6,10 @@ import java.net.DatagramPacket;
 import Comunicação.Comunicacao;
 
 public class Escravo extends Processo implements Runnable {
+	
+	//chavesDeCriptografia public do mestre
+	private String chavePublicaMestre;
+	
 	//Variáveis de Eleicao.
 	private final long tempoEleicao = 5000; // tempo da eleição demora 5 s
 	private long tempoInicioEleicao = Long.MIN_VALUE; //Armazena o tempo em que a eleição é iniciada 
@@ -111,9 +115,14 @@ public class Escravo extends Processo implements Runnable {
 				enviaMsgRelogio();
 				break;
 			case Comunicacao.AJUSTE_RELOGIO:
-				ajustaRelogio(msg);
-				break;
-			case Comunicacao.RECONHECIMENTO:
+				
+				System.out.println("Debug" + msg[1]);
+				String auxMsg[] = descriptografa(msg[1], chavePublicaMestre).split(" "); // descripografa e separa o ID da msg
+				if ( Integer.parseInt(auxMsg[0]) == idMestre ){ //verifica se o ID está correto. Teste para ver se a descritografica ocorreu certo
+					ajustaRelogio(auxMsg[1]); // ajuda o relógio;
+				}else{
+					System.out.println("Computador Mal intencionado na rede");
+				}			
 				break;
 			case Comunicacao.ELEICAO:
 				verificaEleicao(msg);
@@ -122,10 +131,12 @@ public class Escravo extends Processo implements Runnable {
 				getHorario(); //(Necessário, pois essa operação será feita quando o mestre pedir o horário, e ela demora 15ms no mínimo ¬¬).
 				enviaMsgRTT();
 				break;
+			case Comunicacao.CHAVE_PUB:
+				chavePublicaMestre = msg[Comunicacao.INDEX_MSG]; //recebe chave publica do mestre e seta em seu atributo para utilizar na autenticação posteriormente
 		}
 	}
-	public void ajustaRelogio(String [] msg) throws IOException{
-		long ajuste = Long.parseLong(msg[Comunicacao.INDEX_MSG]);
+	public void ajustaRelogio(String msg) throws IOException{
+		long ajuste = Long.parseLong(msg);
 		System.out.println("Novo ajuste feito de: "+ajuste+"ms do tempo atual");
 		String horaAtual = getHorario(); 
 		setHorario(converMillisHours(convertHoursMillis(horaAtual)+ajuste));
@@ -148,5 +159,8 @@ public class Escravo extends Processo implements Runnable {
 		//Envia mensagem para o mestre para isso utiliza o Ip do mestre e seu Id (ID calcula a porta do mestre).
 		//O conteudo da msg informa que o tipo é de REQ_RELOGIO e a ID desse processo escravo, e o relógio.
 		uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.REQ_RELOGIO, ID, ""+convertHoursMillis(getHorario())));
+	}
+	public String descriptografa(String msg, String chave){
+		return msg;
 	}
 }

@@ -21,6 +21,7 @@ public class Comunicacao {
 	public final static int	RECONHECIMENTO = 3;
 	public final static int	ELEICAO = 4;
 	public final static int	CALC_RTT_MAX = 5;
+	public final static int CHAVE_PUB = 6;
 
 	
 	private ArrayList<String[]> contatos;
