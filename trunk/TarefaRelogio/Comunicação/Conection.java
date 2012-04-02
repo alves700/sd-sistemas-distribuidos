@@ -3,6 +3,7 @@ package Comunicação;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -59,8 +60,9 @@ public abstract class Conection  extends Thread{
     /**   
    	@param dp - DatagramPacket.
    	@return mensagem do DatagramPacket recebido.
+     * @throws UnsupportedEncodingException 
    	*/ 
-   public String getMsg(DatagramPacket dp){
+   public String getMsg(DatagramPacket dp) throws UnsupportedEncodingException{
 	   	if ( dp != null ){
 	   		byte [] m = dp.getData();
 	   		int i = 0;
@@ -70,7 +72,7 @@ public abstract class Conection  extends Thread{
 	   			}
 	   		}
 	   		
-	   		String msg = new String(dp.getData());
+	   		String msg = new String(dp.getData(), "ISO-8859-1");
 	   		return msg.substring(0,i);
 	   	}
 	   	else

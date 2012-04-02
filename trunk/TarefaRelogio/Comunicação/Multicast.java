@@ -44,7 +44,7 @@ public class Multicast extends Conection{
     @param msg - Mensagem enviada para o grupo.
     */
     public void enviaMsg(String msg) throws IOException{
-        byte [] m = msg.getBytes();
+        byte [] m = msg.getBytes("ISO-8859-1");
         DatagramPacket messageOut = new DatagramPacket(m, m.length, address, port);
         getSocket().send(messageOut);
       
