@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.security.InvalidKeyException;
@@ -243,7 +244,7 @@ public class Escravo extends Processo{
 			System.out.println("crypt: " + msg);
 			cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, chavePublicaMestre);
-			plainText = cipher.doFinal(msg.getBytes());
+			plainText = cipher.doFinal(msg.getBytes("ISO-8859-1"));
 		    System.out.println("plain: " + new String(plainText));
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
@@ -258,6 +259,9 @@ public class Escravo extends Processo{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

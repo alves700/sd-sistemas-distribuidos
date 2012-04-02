@@ -34,7 +34,7 @@ public class Unicast extends Conection{
 	public void enviaMsg(String ip, int id, String msg) throws IOException{
 		int port = basePort +id;
 		address = InetAddress.getByName(ip);
-		byte [] m = msg.getBytes();
+		byte [] m = msg.getBytes("ISO-8859-1");
 		DatagramPacket pacote = new DatagramPacket(m, m.length, address, port);
 		getSocket().send(pacote);
 	}

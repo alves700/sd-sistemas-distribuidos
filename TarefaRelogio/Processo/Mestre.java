@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.security.InvalidKeyException;
@@ -279,8 +280,9 @@ public class Mestre extends Processo{
 	Verifica o tipo de mensagem que chegou via Unicast. Possíveis mensagens: 
 	Requisição de relógio e Cálculo de RTT máximo. Essas mensagens chegam a partir dos escravos
 	@param dp - DatagramPacket da mensagem que chegou.    
+	 * @throws UnsupportedEncodingException 
 	*/
-	public void processaMensagem(DatagramPacket dp){
+	public void processaMensagem(DatagramPacket dp) throws UnsupportedEncodingException{
 		String[] msg = mc.getMsg(dp).split(" ");
 		 
 		switch( Integer.parseInt(msg[Comunicacao.INDEX_TIPO]) ){
@@ -355,8 +357,9 @@ public class Mestre extends Processo{
 	@param msg - que será criptografada.
 	@param chave - chave de criptografia
 	@return mensagem criptografada.
+	 * @throws UnsupportedEncodingException 
 	*/
-	public String criptografa(String msg){
+	public String criptografa(String msg) throws UnsupportedEncodingException{
 		byte[] cipherText = null;
 		try {
 			cipher = Cipher.getInstance("RSA");
@@ -379,7 +382,8 @@ public class Mestre extends Processo{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	     
 	   
-		return new String(cipherText);
+		return new String( cipherText, "ISO-8859-1");
 	}
 }
