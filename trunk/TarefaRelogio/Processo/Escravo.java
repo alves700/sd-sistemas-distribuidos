@@ -43,20 +43,7 @@ public class Escravo extends Processo{
 	
 	public Escravo() throws IOException{
 		System.out.println("Sou um Escravo");
-		
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-		try {
-			cipher = Cipher.getInstance("RSA", "BC");
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchProviderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	/** 
@@ -254,6 +241,7 @@ public class Escravo extends Processo{
 		byte[] plainText = null;
 		try {
 			System.out.println("crypt: " + msg);
+			cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, chavePublicaMestre);
 			plainText = cipher.doFinal(msg.getBytes());
 		    System.out.println("plain: " + new String(plainText));
@@ -264,6 +252,12 @@ public class Escravo extends Processo{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

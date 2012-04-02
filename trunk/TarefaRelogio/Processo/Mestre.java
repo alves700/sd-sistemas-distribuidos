@@ -86,9 +86,9 @@ public class Mestre extends Processo{
 	public void geraChaves() throws NoSuchAlgorithmException, NoSuchProviderException{
 		
 			random = new SecureRandom();
-		    KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC");
+		    KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
 	
-		    generator.initialize(1024, random);
+		    generator.initialize(1024);
 	
 		    KeyPair pair = generator.generateKeyPair();
 		    chavePublica = pair.getPublic();
