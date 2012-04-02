@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -26,7 +27,7 @@ import Comunicação.Comunicacao;
 public class Escravo extends Processo{
 	
 	//chavesDeCriptografia public do mestre
-	private PublicKey chavePublicaMestre;
+	private Key chavePublicaMestre;
 	
 	//Variáveis de Eleicao.
 	private final long tempoEleicao = 5000; // tempo da eleição demora 5 s
@@ -171,9 +172,8 @@ public class Escravo extends Processo{
 				enviaMsgRelogio();
 				break;
 			case Comunicacao.AJUSTE_RELOGIO:
-				
-				String auxMsg[] = descriptografa(msg[1]).split(" "); // descripografa e separa o ID da msg
-				System.out.println("Debug" + auxMsg[1]);
+				String auxMsg[] = descriptografa(x.substring(2)).split(" "); // descripografa e separa o ID da msg
+				//System.out.println("Debug" + auxMsg[1]);
 				if ( Integer.parseInt(auxMsg[0]) == idMestre ){ //verifica se o ID está correto. Teste para ver se a descritografica ocorreu certo
 					ajustaRelogio(auxMsg[1]); // ajuda o relógio;
 				}else{
@@ -199,7 +199,7 @@ public class Escravo extends Processo{
 		    RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
 		    KeyFactory fact = KeyFactory.getInstance("RSA");
 		    chavePublicaMestre = fact.generatePublic(keySpec);
-		    
+		    System.out.println(chavePublicaMestre);
 		  } catch (Exception e) {
 		    throw new RuntimeException("Spurious serialisation error", e);
 		  }
@@ -253,9 +253,10 @@ public class Escravo extends Processo{
 	public String descriptografa(String msg){
 		byte[] plainText = null;
 		try {
+			System.out.println("crypt: " + msg);
 			cipher.init(Cipher.DECRYPT_MODE, chavePublicaMestre);
 			plainText = cipher.doFinal(msg.getBytes());
-		    System.out.println("plain : " + new String(plainText));
+		    System.out.println("plain: " + new String(plainText));
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

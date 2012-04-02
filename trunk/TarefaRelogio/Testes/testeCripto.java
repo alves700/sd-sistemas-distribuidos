@@ -5,25 +5,31 @@ import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.Signature;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAKeyGenParameterSpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
 import javax.crypto.Cipher;
+
+import Comunicação.Comunicacao;
+
 public class testeCripto {
 	public static void main(String[] args) throws Exception {
 	    Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
-	    byte[] input = "abc aad123123".getBytes();
-	    Cipher cipher = Cipher.getInstance("RSA", "BC");
+	    byte[] input = "khjk".getBytes();
+	    Cipher cipher = Cipher.getInstance("RSA");
+	    
 	    SecureRandom random = new SecureRandom();
-	    KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC");
+	    KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
 
 	    generator.initialize(1024, random);
 
@@ -35,12 +41,34 @@ public class testeCripto {
 	    
 	    System.out.println(pubKey.toString()+ "  " + pubKey.getFormat());
 	    
-	    cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+	    
+	    cipher.init(Cipher.ENCRYPT_MODE, privKey);
 	    byte[] cipherText = cipher.doFinal(input);
 	    System.out.println("cipher: " + new String(cipherText));
-
-	    cipher.init(Cipher.DECRYPT_MODE, privKey);
-	    byte[] plainText = cipher.doFinal(cipherText);
-	    System.out.println("plain : " + new String(plainText));
-	  }
+	    
+	    KeyFactory fact = null;
+	    try {
+	    	
+			RSAPublicKeySpec pub = null;
+			
+			fact = KeyFactory.getInstance("RSA");
+			pub = fact.getKeySpec(pubKey, RSAPublicKeySpec.class);
+				
+			
+		    BigInteger m = pub.getModulus();
+		    BigInteger e = pub.getPublicExponent();
+		    RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
+		    Key pubKey2 = fact.generatePublic(keySpec);
+		    System.out.println(pubKey2);
+		  
+	    
+		    Cipher cipher2 = Cipher.getInstance("RSA");
+		    cipher2.init(Cipher.DECRYPT_MODE, pubKey);
+		    byte[] plainText = cipher2.doFinal(cipherText);
+		    System.out.println("plain : " + new String(plainText));
+		    
+	    } catch (Exception e) {
+		    throw new RuntimeException("Spurious serialisation error", e);
+		}
+	}
 }

@@ -150,7 +150,7 @@ public class Mestre extends Processo{
     		
     	String m = pub.getModulus().toString();
     	String e = pub.getPublicExponent().toString();
-    	System.out.println(new String(" m:  "+m +" "+ e));
+    	System.out.println(chavePublica);
 	    mc.enviaMsg(comm.protMsg(Comunicacao.CHAVE_PUB, ID, ""+ m + " "+ e));
 	}
 	/** 
@@ -359,13 +359,10 @@ public class Mestre extends Processo{
 	public String criptografa(String msg){
 		byte[] cipherText = null;
 		try {
-			cipher = Cipher.getInstance("RSA", "BC");
-			cipher.init(Cipher.ENCRYPT_MODE, chavePublica);
+			cipher = Cipher.getInstance("RSA");
+			cipher.init(Cipher.ENCRYPT_MODE, chavePrivada);
 			cipherText = cipher.doFinal(msg.getBytes());
 		    System.out.println("cipher: " + new String(cipherText));
-		    cipher.init(Cipher.DECRYPT_MODE, chavePrivada);
-		    byte[] plainText = cipher.doFinal(msg.getBytes());
-		    System.out.println("plain : " + new String(plainText));
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -376,9 +373,6 @@ public class Mestre extends Processo{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchProviderException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
