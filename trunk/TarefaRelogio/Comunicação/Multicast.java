@@ -1,6 +1,7 @@
 package Comunicação;
 
 import java.net.*;
+import java.security.Key;
 import java.util.ArrayList;
 import java.io.*;
 

@@ -1,9 +1,12 @@
 package Comunicação;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.security.Key;
 import java.util.ArrayList;
 
 /** 
@@ -83,6 +86,7 @@ public abstract class Conection  extends Thread{
    
 	/** 
 	Responsável pela leitura do buffer de entrada.
+	 * @throws ClassNotFoundException 
 	*/ 
 	//Acho que esse synchronized pode ser removido.
 	public synchronized void recebeMsg() throws IOException{
@@ -90,6 +94,7 @@ public abstract class Conection  extends Thread{
                 // get messages from others in group
         DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
         getSocket().receive(messageIn);
+        
         inBuffer.add(messageIn);
       
     }

@@ -1,8 +1,28 @@
 package Processo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.math.BigInteger;
 import java.net.DatagramPacket;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import Comunicação.Comunicacao;
 /** 
@@ -10,9 +30,10 @@ Classe responsável pelo ajuste do relógio entre processos.
 */
 public class Mestre extends Processo{
 	
+	private SecureRandom random;
 	//chavesDeCritografia
-	private String chavePrivada;
-	private String chavePublica;
+	private Key chavePublica;
+	private Key chavePrivada;
 	
 	//Variáveis do mestre.
 	private final long tempoEnvioHello = 1000;
@@ -45,13 +66,33 @@ public class Mestre extends Processo{
 	
 	public Mestre() throws IOException {
 		System.out.println("Sou o Mestre.");
-		geraChaves();
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+		try {
+				geraChaves();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
 	}
 	/** 
 	Gera as chaves privada e pública do mestre.
+	 * @throws NoSuchProviderException 
+	 * @throws NoSuchAlgorithmException 
 	*/
-	public void geraChaves(){
+	public void geraChaves() throws NoSuchAlgorithmException, NoSuchProviderException{
 		
+			random = new SecureRandom();
+		    KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC");
+	
+		    generator.initialize(1024, random);
+	
+		    KeyPair pair = generator.generateKeyPair();
+		    chavePublica = pair.getPublic();
+		    chavePrivada = pair.getPrivate();
 	}
 	
 	/** 
@@ -91,7 +132,26 @@ public class Mestre extends Processo{
 	Envia a chave pública através da comunicação Multicast.  
 	*/
 	public void enviaChavePublica() throws IOException{
-		   mc.enviaMsg(comm.protMsg(Comunicacao.CHAVE_PUB,ID, chavePublica));
+		
+		KeyFactory fact;
+		RSAPublicKeySpec pub = null;
+		try {
+			fact = KeyFactory.getInstance("RSA");
+			pub = fact.getKeySpec(chavePublica, RSAPublicKeySpec.class);
+			
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    		
+    	String m = pub.getModulus().toString();
+    	String e = pub.getPublicExponent().toString();
+    	System.out.println(new String(" m:  "+m +" "+ e));
+	    mc.enviaMsg(comm.protMsg(Comunicacao.CHAVE_PUB, ID, ""+ m + " "+ e));
 	}
 	/** 
 	Envia mensagens Hello, Requisição de RTT e Requisição de Relógio.  
@@ -187,7 +247,8 @@ public class Mestre extends Processo{
 			
 			if(Long.parseLong(rel[indID]) != ID){
 				long ajuste =  media- Long.parseLong(rel[indREL]);
-				String msg = criptografa(""+ ID +" "+ajuste, chavePrivada);//Criptografa o ID junto com a msg
+				String auxMsg = (""+ ID +" "+ajuste); ///A criptografia trabalha com BigInteger
+				String msg = criptografa(auxMsg);//Criptografa o ID junto com a msg
 				uc.enviaMsg(rel[indIP], Integer.parseInt(rel[indID]), ""+ Comunicacao.AJUSTE_RELOGIO +" "+  msg);// naum usei o protMSG pq o ID esta junto com a msg critografada
 			}
 			else{
@@ -295,8 +356,36 @@ public class Mestre extends Processo{
 	@param chave - chave de criptografia
 	@return mensagem criptografada.
 	*/
-	public String criptografa(String msg, String chave){
-		//implementar CRITOGRAFIA
-		return msg;
+	public String criptografa(String msg){
+		byte[] cipherText = null;
+		try {
+			cipher = Cipher.getInstance("RSA", "BC");
+			cipher.init(Cipher.ENCRYPT_MODE, chavePublica);
+			cipherText = cipher.doFinal(msg.getBytes());
+		    System.out.println("cipher: " + new String(cipherText));
+		    cipher.init(Cipher.DECRYPT_MODE, chavePrivada);
+		    byte[] plainText = cipher.doFinal(msg.getBytes());
+		    System.out.println("plain : " + new String(plainText));
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	   
+		return new String(cipherText);
 	}
 }
