@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 
+import javax.crypto.Cipher;
+
 import Comunicação.*;
 
 /** 
@@ -12,6 +14,9 @@ Classe que possui o main, e além disso possui métodos do Processo. O processo é 
 instancia mestre ou escravo, processamento de mensagens e ajuste de horários. 
 */
 public class Processo extends Thread{
+	
+	//Cifrador
+	protected Cipher cipher;
 	
 	protected Comunicacao comm;;
 	protected Multicast mc;
