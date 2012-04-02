@@ -39,7 +39,7 @@ public class testeCripto {
 	    
 	    Key privKey = pair.getPrivate();
 	    
-	    System.out.println(pubKey.toString()+ "  " + pubKey.getFormat());
+	    System.out.println(pubKey);
 	    
 	    
 	    cipher.init(Cipher.ENCRYPT_MODE, privKey);
@@ -63,7 +63,7 @@ public class testeCripto {
 		  
 	    
 		    Cipher cipher2 = Cipher.getInstance("RSA");
-		    cipher2.init(Cipher.DECRYPT_MODE, pubKey);
+		    cipher2.init(Cipher.DECRYPT_MODE, pubKey2);
 		    byte[] plainText = cipher2.doFinal(cipherText);
 		    System.out.println("plain : " + new String(plainText));
 		    
