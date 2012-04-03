@@ -22,10 +22,13 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.swing.text.Segment;
 
 import Comunicação.Comunicacao;
 
 public class Escravo extends Processo{
+	
+	long ultimoSegmento = 0;
 	
 	/** Chave de criptografia pública do mestre.*/
 	private Key chavePublicaMestre;
@@ -165,13 +168,12 @@ public class Escravo extends Processo{
 				enviaMsgRelogio();
 				break;
 			case Comunicacao.AJUSTE_RELOGIO:
-				String auxMsg[] = descriptografa(msgString.substring(2)).split(" "); // descripografa e separa o ID da msg
-				//System.out.println("Debug" + auxMsg[1]);
-				if ( Integer.parseInt(auxMsg[0]) == idMestre ){ //verifica se o ID está correto. Teste para ver se a descritografica ocorreu certo
-					ajustaRelogio(auxMsg[1]); // ajuda o relógio;
+				
+				if (validaMsg(msgString)){ //verifica se o ID está correto. Teste para ver se a descritografica ocorreu certo
+					ajustaRelogio(msg[1]); // ajuda o relógio; Unico pacote onde a msg está no index 1
 				}else{
 					System.out.println("Computador Mal intencionado na rede");
-				}			
+				}
 				break;
 			case Comunicacao.ELEICAO:
 				verificaEleicao(msg);
@@ -183,6 +185,19 @@ public class Escravo extends Processo{
 			case Comunicacao.CHAVE_PUB:
 				updateChavePublica(msgString); //passa a String com a mensagem inteira pois essa eh a unica msg que vem com 4 parametros.
 				 //recebe chave publica do mestre e seta em seu atributo para utilizar na autenticação posteriormente
+		}
+	}
+	public boolean validaMsg(String msgString){
+		
+		int j = msgString.indexOf(" ", 2);
+		String auxMsg[] = descriptografa(msgString.substring(j+1)).split(" "); // descripografa e separa o ID da msg
+		
+		System.out.println("Debug:" + auxMsg[0] + " " + auxMsg[1]);
+		if ( Integer.parseInt(auxMsg[0]) == idMestre && Long.parseLong(auxMsg[1]) > ultimoSegmento ){ //verifica se o ID está correto. Teste para ver se a descritografica ocorreu certo
+			ultimoSegmento = Long.parseLong(auxMsg[1]);
+			return true; // ajuda o relógio; Unico pacote onde a msg está no index 1
+		}else{
+			return false;
 		}
 	}
 	/** 
