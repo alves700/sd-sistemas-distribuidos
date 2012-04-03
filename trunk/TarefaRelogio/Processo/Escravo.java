@@ -217,7 +217,7 @@ public class Escravo extends Processo{
 		    RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
 		    KeyFactory fact = KeyFactory.getInstance("RSA");
 		    chavePublicaMestre = fact.generatePublic(keySpec);
-		    System.out.println(chavePublicaMestre);
+		    //System.out.println(chavePublicaMestre);
 		  } catch (Exception e) {
 		    throw new RuntimeException("Spurious serialisation error", e);
 		  }
