@@ -31,37 +31,56 @@ Classe responsável pelo ajuste do relógio entre processos.
 */
 public class Mestre extends Processo{
 	
+	/** Gerador de chaves aleatórias.*/
 	private SecureRandom random;
-	//chavesDeCritografia
+
+	/** Chave pública.*/
 	private Key chavePublica;
+	/** Chave privada.*/
 	private Key chavePrivada;
 	
-	//Variáveis do mestre.
+	//Variáveis de Hello.
+	/** Período em que mestre envia hello para escravos.*/
 	private final long tempoEnvioHello = 1000;
+	/** Tempo em que o ultimo hello foi enviado.*/
 	private long ultimoHelloEnviado;
 	
 	//Variáveis de Calculo do RTT maximo
+	/** Valor do RTT máximo.*/
 	private int RTTMax = 0;
 	
+	/** Tempo de espera para a requisiçao de RTTs dos escravos.*/
 	private final long tempoEsperaRTT = 1000;//Espera por 1s o RTT de outros escravos
+	/** Período em que mestre envia requisiçaõ de RTT para escravos.*/
 	private final long tempoReqRTT = 20000;//Recalcula o RTT de 20 em 20 segundos.
-	private boolean requerindoRTT = false;//True quando mestre requisita RTT, modificada para false quando RTT é calculado. 
+	/** Informa o status da requisição de RTTs.*/
+	private boolean requerindoRTT = false;//True quando mestre requisita RTT, modificada para false quando RTT é calculado.
+	/** Tempo em que ocorreu a última requisição do RTT.*/
 	private long ultimoReqRTTEnviado; //"Horário" em que ocorreu a ultima requisição de RTT, também é utilizada para o cálculo do RTT de um processo.
 	
+	/** Lista de RTTs armazenados.*/
 	ArrayList <Integer> RTT = new ArrayList <Integer>(); // ArrayList que armazena os RTTs dos processos.
 	
 	//Variáveis que controlam a requisição de relógio
+	/** Período em que mestre envia requisição de relógio para escravos.*/
 	private final long tempoReqRelogio = 5000;//Tempo entre um requerimento e outro do relógio
+	/** Tempo de espera para a requisição de relógios dos escravos.*/
 	private final long tempoEsperaRelogio = 1000;
+	/** Informa o status da requisição de relógios.*/
 	private boolean requerindoRelogio = false;
+	/** Tempo em que ocorreu a última requisição de relógios.*/
 	private long ultimoReqRelogioEnviado;
 	
+	/** Index IP utilizado para a requisição e ajuste de relógios.*/
 	private final int indIP = 0;
+	/** Index ID utilizado para a requisição e ajuste de relógios.*/
 	private final int indID = 1;
+	/** Index do relógio utilizado para a requisição e ajuste de relógios.*/
 	private final int indREL = 2;
+	/** Index do RTT utilizado para a requisição e ajuste de relógios.*/
 	private final int indRTT = 3;
 	
-	
+	/** Lista que contém informações de IP ID Relógio e RTT dos escravos e do próprio mestre.*/
 	private ArrayList <String> relogios = new ArrayList <String>(); //ArryList que armazena IPs IDs e os relogios recebidos por processos e seus RTTs.
 	
 	
@@ -81,8 +100,6 @@ public class Mestre extends Processo{
 	}
 	/** 
 	Gera as chaves privada e pública do mestre.
-	 * @throws NoSuchProviderException 
-	 * @throws NoSuchAlgorithmException 
 	*/
 	public void geraChaves() throws NoSuchAlgorithmException, NoSuchProviderException{
 		
@@ -280,7 +297,6 @@ public class Mestre extends Processo{
 	Verifica o tipo de mensagem que chegou via Unicast. Possíveis mensagens: 
 	Requisição de relógio e Cálculo de RTT máximo. Essas mensagens chegam a partir dos escravos
 	@param dp - DatagramPacket da mensagem que chegou.    
-	 * @throws UnsupportedEncodingException 
 	*/
 	public void processaMensagem(DatagramPacket dp) throws UnsupportedEncodingException{
 		String[] msg = mc.getMsg(dp).split(" ");
@@ -355,9 +371,7 @@ public class Mestre extends Processo{
 	/** 
 	Aplica o algoritmo de criptografia em uma mensagem.
 	@param msg - que será criptografada.
-	@param chave - chave de criptografia
 	@return mensagem criptografada.
-	 * @throws UnsupportedEncodingException 
 	*/
 	public String criptografa(String msg) throws UnsupportedEncodingException{
 		byte[] cipherText = null;
@@ -365,7 +379,7 @@ public class Mestre extends Processo{
 			cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.ENCRYPT_MODE, chavePrivada);
 			cipherText = cipher.doFinal(msg.getBytes());
-		    //System.out.println("cipher: " + new String(cipherText, "ISO-8859-1"));
+		    //System.out.println("cipher: " + new String(cipherText));
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
