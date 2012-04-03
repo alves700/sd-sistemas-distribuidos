@@ -35,7 +35,7 @@ public class Escravo extends Processo{
 	private Key chavePublicaMestre;
 	//Variáveis de Eleição
 	/** Tempo de duração em que ocorre uma eleição.*/
-	private final long tempoEleicao = 5000;
+	private final long tempoEleicao = 7000;
 	/** Tempo em que uma eleição foi iniciada.*/
 	private long tempoInicioEleicao = Long.MIN_VALUE;
 	/** Verifica o status da eleição.*/
@@ -43,7 +43,7 @@ public class Escravo extends Processo{
 	
 	//Variáveis do Hello.
 	/** Tempo máximo aguardado por um Hello do mestre.*/
-	private final long tempoEsperaHello = 3000; // 
+	private final long tempoEsperaHello = 5000; // 
 	/** Tempo em que o último hello foi recebido.*/
 	private long ultimoHelloRecebido; 
 	
