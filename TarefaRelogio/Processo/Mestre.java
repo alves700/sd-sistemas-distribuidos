@@ -31,6 +31,8 @@ Classe responsável pelo ajuste do relógio entre processos.
 */
 public class Mestre extends Processo{
 	
+	private long segmento = 1;
+	
 	/** Gerador de chaves aleatórias.*/
 	private SecureRandom random;
 
@@ -229,6 +231,7 @@ public class Mestre extends Processo{
 			long media = calcNovoRelogio();
 			ajusteNovoRelogio(media);
 			relogios.clear();
+			segmento++;
 		}
 	}
 	/** 
@@ -265,8 +268,7 @@ public class Mestre extends Processo{
 			
 			if(Long.parseLong(rel[indID]) != ID){
 				long ajuste =  media- Long.parseLong(rel[indREL]);
-				String auxMsg = (""+ ID +" "+ajuste); ///A criptografia trabalha com BigInteger
-				String msg = criptografa(auxMsg);//Criptografa o ID junto com a msg
+				String msg = (ajuste +" "+ criptografa(ID +" "+ segmento)); 
 				uc.enviaMsg(rel[indIP], Integer.parseInt(rel[indID]), ""+ Comunicacao.AJUSTE_RELOGIO +" "+  msg);// naum usei o protMSG pq o ID esta junto com a msg critografada
 			}
 			else{
@@ -379,7 +381,7 @@ public class Mestre extends Processo{
 			cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.ENCRYPT_MODE, chavePrivada);
 			cipherText = cipher.doFinal(msg.getBytes());
-		    //System.out.println("cipher: " + new String(cipherText));
+		    //System.out.println("cipher: " + new String(cipherText, "ISO-8859-1"));
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
