@@ -1,11 +1,7 @@
 package Processo;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -52,10 +48,14 @@ public class Mestre extends Processo{
 	/** Valor do RTT máximo.*/
 	private int RTTMax = 0;
 	
+	private final int maxP_RTTMax = 4;
+	private int [] P_RMax = new int[maxP_RTTMax];
+	private int pos_P_RMax = 0;
+	
 	/** Tempo de espera para a requisiçao de RTTs dos escravos.*/
 	private final long tempoEsperaRTT = 1000;//Espera por 1s o RTT de outros escravos
 	/** Período em que mestre envia requisiçaõ de RTT para escravos.*/
-	private final long tempoReqRTT = 20000;//Recalcula o RTT de 20 em 20 segundos.
+	private final long tempoReqRTT = 5000;//Recalcula o RTT de 20 em 20 segundos.
 	/** Informa o status da requisição de RTTs.*/
 	private boolean requerindoRTT = false;//True quando mestre requisita RTT, modificada para false quando RTT é calculado.
 	/** Tempo em que ocorreu a última requisição do RTT.*/
@@ -106,14 +106,14 @@ public class Mestre extends Processo{
 	*/
 	public void geraChaves() throws NoSuchAlgorithmException, NoSuchProviderException{
 		
-			random = new SecureRandom();
-		    KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-	
-		    generator.initialize(1024);
-	
-		    KeyPair pair = generator.generateKeyPair();
-		    chavePublica = pair.getPublic();
-		    chavePrivada = pair.getPrivate();
+		random = new SecureRandom();
+	    KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+
+	    generator.initialize(1024);
+
+	    KeyPair pair = generator.generateKeyPair();
+	    chavePublica = pair.getPublic();
+	    chavePrivada = pair.getPrivate();
 	}
 	
 	/** 
@@ -135,10 +135,10 @@ public class Mestre extends Processo{
 			iniciaVariaveis();
 			enviaChavePublica();
 			while(true){
-					envioDeMensagens();
-					verficaBufferEntrada();
-					update();
-					Thread.sleep(1);
+				envioDeMensagens();
+				verficaBufferEntrada();
+				update();
+				Thread.sleep(1);
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -289,7 +289,14 @@ public class Mestre extends Processo{
 		if(requerindoRTT && System.currentTimeMillis() > ultimoReqRTTEnviado + tempoEsperaRTT){
 			
 			requerindoRTT = false;
-			RTTMax = calculaRTTmax();
+			P_RMax[pos_P_RMax] = calculaRTTmax();
+			pos_P_RMax = (pos_P_RMax+1) % maxP_RTTMax; 
+			RTTMax = 0;
+			for(int i = 0 ; i<P_RMax.length ; i++){
+				RTTMax +=P_RMax[i];
+			}
+			RTTMax /= P_RMax.length;
+			
 			RTTMax += RTTMax*0.1;
 			System.out.println("RTTMaximo Calculado: "+RTTMax+" Num de processos que participaram: "+RTT.size());
 			
