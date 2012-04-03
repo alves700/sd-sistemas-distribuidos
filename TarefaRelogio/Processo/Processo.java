@@ -15,15 +15,21 @@ instancia mestre ou escravo, processamento de mensagens e ajuste de horários.
 */
 public class Processo extends Thread{
 	
-	//Cifrador
+	/** Objeto que aplica algoritmos de criptografia em uma mensagem dado uma chave.*/
 	protected Cipher cipher;
 	
+	/** Comunicação do processo.*/
 	protected Comunicacao comm;;
+	/** Comunicação multicast.*/
 	protected Multicast mc;
+	/** Comunicação unicast.*/
 	protected Unicast uc;
 	
+	/** ID do mestre.*/
 	protected int idMestre = -1;
+	/** IP do mestre.*/
 	protected String ipMestre;
+	/** ID do processo.*/
 	protected int ID;
 	
 	/** 
