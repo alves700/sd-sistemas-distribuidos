@@ -148,8 +148,8 @@ public class Escravo extends Processo{
 	@param dp - DatagramPacket da mensagem que chegou.    
 	*/
 	public void processaMensagem(DatagramPacket dp) throws IOException{
-		String x = mc.getMsg(dp);
-		String msg[] = x.split(" ");
+		String msgString = mc.getMsg(dp);
+		String msg[] = msgString.split(" ");
 		
 		switch( Integer.parseInt(msg[Comunicacao.INDEX_TIPO]) ){
 			//Reconfigura o ultimo hello recebido.
@@ -160,7 +160,7 @@ public class Escravo extends Processo{
 				enviaMsgRelogio();
 				break;
 			case Comunicacao.AJUSTE_RELOGIO:
-				String auxMsg[] = descriptografa(x.substring(2)).split(" "); // descripografa e separa o ID da msg
+				String auxMsg[] = descriptografa(msgString.substring(2)).split(" "); // descripografa e separa o ID da msg
 				//System.out.println("Debug" + auxMsg[1]);
 				if ( Integer.parseInt(auxMsg[0]) == idMestre ){ //verifica se o ID está correto. Teste para ver se a descritografica ocorreu certo
 					ajustaRelogio(auxMsg[1]); // ajuda o relógio;
@@ -176,7 +176,7 @@ public class Escravo extends Processo{
 				enviaMsgRTT();
 				break;
 			case Comunicacao.CHAVE_PUB:
-				updateChavePublica(x); //passa a String com a mensagem inteira pois essa eh a unica msg que vem com 4 parametros.
+				updateChavePublica(msgString); //passa a String com a mensagem inteira pois essa eh a unica msg que vem com 4 parametros.
 				 //recebe chave publica do mestre e seta em seu atributo para utilizar na autenticação posteriormente
 		}
 	}
@@ -241,11 +241,11 @@ public class Escravo extends Processo{
 	public String descriptografa(String msg){
 		byte[] plainText = null;
 		try {
-			System.out.println("crypt: " + msg);
+			//System.out.println("crypt: " + msg);
 			cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, chavePublicaMestre);
 			plainText = cipher.doFinal(msg.getBytes("ISO-8859-1"));
-		    System.out.println("plain: " + new String(plainText));
+		   // System.out.println("plain: " + new String(plainText));
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

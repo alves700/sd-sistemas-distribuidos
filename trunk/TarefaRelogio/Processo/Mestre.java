@@ -151,7 +151,7 @@ public class Mestre extends Processo{
     		
     	String m = pub.getModulus().toString();
     	String e = pub.getPublicExponent().toString();
-    	System.out.println(chavePublica);
+    	//System.out.println(chavePublica);
 	    mc.enviaMsg(comm.protMsg(Comunicacao.CHAVE_PUB, ID, ""+ m + " "+ e));
 	}
 	/** 
@@ -365,7 +365,7 @@ public class Mestre extends Processo{
 			cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.ENCRYPT_MODE, chavePrivada);
 			cipherText = cipher.doFinal(msg.getBytes());
-		    System.out.println("cipher: " + new String(cipherText));
+		    //System.out.println("cipher: " + new String(cipherText, "ISO-8859-1"));
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

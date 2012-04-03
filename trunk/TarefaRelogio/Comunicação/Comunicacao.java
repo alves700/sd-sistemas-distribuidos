@@ -149,7 +149,7 @@ public class Comunicacao {
 					//System.out.println(contato[INDEX_IP] + " "+ contato[INDEX_MSG]);
 					mc.enviaMsg(protMsg(RECONHECIMENTO,ID));
 					t1 = System.currentTimeMillis();
-				}
+			   }
 				
 			}
 			

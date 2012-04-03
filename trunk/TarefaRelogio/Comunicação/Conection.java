@@ -65,15 +65,8 @@ public abstract class Conection  extends Thread{
    public String getMsg(DatagramPacket dp) throws UnsupportedEncodingException{
 	   	if ( dp != null ){
 	   		byte [] m = dp.getData();
-	   		int i = 0;
-	   		for(; i<dp.getLength();i++){
-	   			if(m[i] == 0){
-	   				break;
-	   			}
-	   		}
-	   		
-	   		String msg = new String(dp.getData(), "ISO-8859-1");
-	   		return msg.substring(0,i);
+	   		String msg = new String(m, "ISO-8859-1");
+	   		return msg.substring(0,dp.getLength());
 	   	}
 	   	else
 	   		return null;
