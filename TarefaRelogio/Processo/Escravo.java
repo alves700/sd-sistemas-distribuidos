@@ -150,7 +150,7 @@ public class Escravo extends Processo{
 	Verifica o tipo de mensagem que chegou via Unicast ou Multicast, logo após faz ou não atualização. 
 	Possíveis mensagens: Hello, Requisição de relógio, Ajuste de Relógio, Eleição, Cálculo do RTT máximo e de Envio de Chave Pública (pelo mestre). 
 	Essas mensagens chegam a partir de outros escravos ou do próprio mestre.
-	@param dp - DatagramPacket da mensagem que chegou.    
+	@param dp DatagramPacket da mensagem que chegou.    
 	*/
 	public void processaMensagem(DatagramPacket dp) throws IOException{
 		String msgString = mc.getMsg(dp);
@@ -185,6 +185,10 @@ public class Escravo extends Processo{
 				 //recebe chave publica do mestre e seta em seu atributo para utilizar na autenticação posteriormente
 		}
 	}
+	/** 
+	Faz a conversão dos elementos Modulus e Exponent passados como argumento para uma réplica da chave pública do mestre.
+	@param obj Contém Modulus e Exponent da chave pública do mestre.   
+	*/
 	public void updateChavePublica(String obj){
 		try {
 		    BigInteger m = new BigInteger(obj.split(" ")[Comunicacao.INDEX_MSG]);
@@ -199,7 +203,7 @@ public class Escravo extends Processo{
 	}
 	/** 
 	Faz ajuste do relógio do escravo.
-	@param msg - Mensagem contendo um valor em millisegundos de ajuste.    
+	@param msg Mensagem contendo um valor em millisegundos de ajuste.    
 	*/
 	public void ajustaRelogio(String msg) throws IOException{
 		long ajuste = Long.parseLong(msg);
@@ -210,7 +214,7 @@ public class Escravo extends Processo{
 	/** 
 	Verifica mensagens que chegam de outros processos e compara o ID da mensagem com o maior ID armazenado no processo de eleição. 
 	Faz a atualização do ID do novo mestre.
-	@param msg - Mensagem contendo um ID.    
+	@param msg Mensagem contendo um ID.    
 	*/
 	public void verificaEleicao(String msg[]){
 		//Verifica se a ID da mensagem de eleição que chegou é maior ou igual a sua. Se for
@@ -239,7 +243,7 @@ public class Escravo extends Processo{
 	}
 	/** 
 	Faz a descriptografia de uma mensagem.
-	@param msg - mensagem encriptografada.
+	@param msg mensagem encriptografada.
 	@return mensagem original.
 	*/
 	public String descriptografa(String msg){

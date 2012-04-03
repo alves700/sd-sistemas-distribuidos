@@ -132,13 +132,13 @@ public class Processo extends Thread{
 	}
 	/** 
 	Faz o processamento da mensagem recebida no buffer de entrada.
-	@param dp - DatagramPacket que contem o conteúdo e IP da mensagem recebida.
+	@param dp DatagramPacket que contem o conteúdo e IP da mensagem recebida.
 	*/
 	public void processaMensagem(DatagramPacket dp) throws IOException{
 	}
 	/** 
 	Faz a conversão de um horário no formato String para millisegundos.
-	@param horario - String que possui o formato hh:mm:ss,xx onde xx indica centésimos de segundo.
+	@param horario String que possui o formato hh:mm:ss,xx onde xx indica centésimos de segundo.
 	@return o horário em millisegundos.
 	*/
 	public long convertHoursMillis(String horario){
@@ -154,7 +154,7 @@ public class Processo extends Thread{
 	}
 	/** 
 	Faz a conversão de um horário em millisegundos para um horário no formato String.
-	@param mills - o horário em millisegundos.
+	@param mills o horário em millisegundos.
 	@return String que possui o formato hh:mm:ss,xx onde xx indica centésimos de segundo.
 	*/
 	public String converMillisHours(long mills){
@@ -194,7 +194,7 @@ public class Processo extends Thread{
 	}
 	/** 
 	Muda o horário atual utilizando o comando time do cmd.
-	@param horario - String que possui o formato hh:mm:ss,xx onde xx indica centésimos de segundo.
+	@param horario String que possui o formato hh:mm:ss,xx onde xx indica centésimos de segundo.
 	*/
 	public void setHorario(String horario) throws IOException{
 		String[] command =  new String[3];
