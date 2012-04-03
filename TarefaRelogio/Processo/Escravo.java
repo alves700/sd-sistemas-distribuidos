@@ -28,7 +28,8 @@ import Comunicação.Comunicacao;
 
 public class Escravo extends Processo{
 	
-	long ultimoSegmento = 0;
+	/** ultimoSegmento segmento recebido pelo escravo do mestre..*/
+	long ultimoSegmento;
 	
 	/** Chave de criptografia pública do mestre.*/
 	private Key chavePublicaMestre;
@@ -60,6 +61,7 @@ public class Escravo extends Processo{
 	*/
 	public void iniciaVariaveis(){
 		ultimoHelloRecebido = System.currentTimeMillis();
+		ultimoSegmento = 0;
 	}
 	
 	/** 
@@ -187,6 +189,10 @@ public class Escravo extends Processo{
 				 //recebe chave publica do mestre e seta em seu atributo para utilizar na autenticação posteriormente
 		}
 	}
+	/** 
+	Valida mensagem com a descriptografia do ID do mestre e segmento.  
+	@return Validacao(true) ou não(false) da mensagem    
+	*/
 	public boolean validaMsg(String msgString){
 		
 		int j = msgString.indexOf(" ", 2);

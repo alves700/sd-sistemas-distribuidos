@@ -31,6 +31,7 @@ Classe responsável pelo ajuste do relógio entre processos.
 */
 public class Mestre extends Processo{
 	
+	/** Segmento de mensagem.*/
 	private long segmento = 1;
 	
 	/** Gerador de chaves aleatórias.*/
