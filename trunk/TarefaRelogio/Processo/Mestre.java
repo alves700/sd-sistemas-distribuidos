@@ -256,7 +256,7 @@ public class Mestre extends Processo{
 	}
 	/** 
 	Envia mensagens de ajuste para os escravos. Mestre atualiza o seu relógio nesse método.
-	@param media - media dos relógios que participaram do algoritmo de Berkeley. 
+	@param media media dos relógios que participaram do algoritmo de Berkeley. 
 	*/
 	public void ajusteNovoRelogio(long media) throws NumberFormatException, IOException{
 		for(int i = 0 ; i< relogios.size();i++){
@@ -296,7 +296,7 @@ public class Mestre extends Processo{
 	/** 
 	Verifica o tipo de mensagem que chegou via Unicast. Possíveis mensagens: 
 	Requisição de relógio e Cálculo de RTT máximo. Essas mensagens chegam a partir dos escravos
-	@param dp - DatagramPacket da mensagem que chegou.    
+	@param dp DatagramPacket da mensagem que chegou.    
 	*/
 	public void processaMensagem(DatagramPacket dp) throws UnsupportedEncodingException{
 		String[] msg = mc.getMsg(dp).split(" ");
@@ -314,8 +314,8 @@ public class Mestre extends Processo{
 	}
 	/** 
 	Adiciona os dados de relógios que chegaram em uma lista.
-	@param dp - possui informação do IP do processo.
-	@param msg - possui a informação do relógio.
+	@param dp possui informação do IP do processo.
+	@param msg possui a informação do relógio.
 	*/
 	private void addRelogio(DatagramPacket dp, String msg[]) {
 		if(requerindoRelogio && Integer.parseInt(msg [Comunicacao.INDEX_ID]) != ID){
@@ -325,7 +325,7 @@ public class Mestre extends Processo{
 	}
 	/** 
 	Verifica se o mestre está requerindo mensagens para o cálculo de RTT, se estiver armazena o valor do RTT da mensagem que chegou
-	@param msg - possui ID do processo.
+	@param msg possui ID do processo.
 	*/
 	private void addRTT(String msg[]){
 		//Caso recebeu msg de Calc de RTT Max que não seja de si mesmo, e está requerindo RTT's adiciona o tempo de RTT na lista. 
@@ -370,7 +370,7 @@ public class Mestre extends Processo{
 	}
 	/** 
 	Aplica o algoritmo de criptografia em uma mensagem.
-	@param msg - que será criptografada.
+	@param msg que será criptografada.
 	@return mensagem criptografada.
 	*/
 	public String criptografa(String msg) throws UnsupportedEncodingException{

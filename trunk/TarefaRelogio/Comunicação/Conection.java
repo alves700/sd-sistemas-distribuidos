@@ -52,7 +52,7 @@ public abstract class Conection  extends Thread{
     	}
     }
 	/**   
-	@param dp - DatagramPacket.
+	@param dp DatagramPacket.
 	@return Endereço IP do DatagramPacket recebido.
 	*/ 
     public String getIP(DatagramPacket dp){
@@ -62,7 +62,7 @@ public abstract class Conection  extends Thread{
     		return null;
     }
     /**   
-   	@param dp - DatagramPacket.
+   	@param dp DatagramPacket.
    	@return mensagem do DatagramPacket recebido.
      * @throws UnsupportedEncodingException 
    	*/ 
@@ -114,7 +114,7 @@ public abstract class Conection  extends Thread{
         }
     }
 	 /**   
-	@param socket - novo DatagramSocket da conexão.
+	@param socket novo DatagramSocket da conexão.
 	*/ 
 	public void setSocket(DatagramSocket socket) {
 		this.socket = socket;

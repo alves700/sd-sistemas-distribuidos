@@ -78,5 +78,6 @@ public class testeCripto {
 	    } catch (Exception e) {
 		    throw new RuntimeException("Spurious serialisation error", e);
 		}
+    
 	}
 }

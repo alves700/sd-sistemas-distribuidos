@@ -18,7 +18,7 @@ public class Unicast extends Conection{
 	
 	/** 
 	Inicia o socket DatagramSocket da comunicação com uma porta. Conexão é liberada.
-	@param id - ID do processo original.
+	@param id ID do processo original.
     */
 	public Unicast(int id) throws SocketException{
 		port = basePort + id;
@@ -28,9 +28,9 @@ public class Unicast extends Conection{
 	}
 	/** 
 	Dado um endereço IP e uma porta envia uma mensagem para esse endereço e porta.
-	@param ip - IP de destino.
-	@param id - ID do processo de destino.
-	@param msg - Mensagem enviada para o processo.
+	@param ip IP de destino.
+	@param id ID do processo de destino.
+	@param msg Mensagem enviada para o processo.
 	*/  
 	public void enviaMsg(String ip, int id, String msg) throws IOException{
 		int port = basePort +id;

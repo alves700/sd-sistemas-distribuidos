@@ -42,7 +42,7 @@ public class Multicast extends Conection{
     }
     /** 
     Envia mensagem ao grupo.
-    @param msg - Mensagem enviada para o grupo.
+    @param msg Mensagem enviada para o grupo.
     */
     public void enviaMsg(String msg) throws IOException{
         byte [] m = msg.getBytes("ISO-8859-1");
@@ -57,7 +57,7 @@ public class Multicast extends Conection{
 		return socket;
 	}
 	/** 
-    @param socket - novo MulticastSocket da comunicação.
+    @param socket novo MulticastSocket da comunicação.
     */
 	public void setSocket(MulticastSocket socket) {
 		this.socket = socket;

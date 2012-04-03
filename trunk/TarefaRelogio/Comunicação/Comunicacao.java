@@ -53,7 +53,7 @@ public class Comunicacao {
 	
 	/** 
 	Objetos das classes Unicast e Multicast são instanciados e iniciados.
-	@param id - ID do processo que instanciou objeto dessa classe.
+	@param id ID do processo que instanciou objeto dessa classe.
 	*/ 
 	public Comunicacao(int id) throws IOException{
 		
@@ -104,9 +104,9 @@ public class Comunicacao {
 
 	/** 
 	Retorna mensagens de comunicação entre processos.
-	@param tipo - tipo da mensagem.
-	@param ID - ID do processo que enviou a mensagem.
-	@param msg - conteúdo da mensagem.
+	@param tipo tipo da mensagem.
+	@param ID ID do processo que enviou a mensagem.
+	@param msg conteúdo da mensagem.
 	@return String contendo a mensagem resultante.
 	*/ 
 	public String protMsg(int tipo, int ID, String msg){
@@ -115,8 +115,8 @@ public class Comunicacao {
 	
 	/** 
 	Retorna mensagens de comunicação entre processos.
-	@param tipo - tipo da mensagem.
-	@param ID - ID do processo que enviou a mensagem.
+	@param tipo tipo da mensagem.
+	@param ID ID do processo que enviou a mensagem.
 	@return String contendo a mensagem resultante.
 	*/
 	public String protMsg(int tipo, int ID){
