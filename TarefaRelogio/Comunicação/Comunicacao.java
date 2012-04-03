@@ -10,34 +10,45 @@ Classe responsável pela comunicação dos processos. Instancia tipos de conexão ta
 */  
 public class Comunicacao {
 	
-	//Para as mensagens enviadas/recebidas.
+	
+	/** Index do conteúdo do pacote recebido/enviado.*/  
 	public final static int INDEX_MSG = 2;
+	/** Index do tipo de mensagem do pacote recebido/enviado.*/  
 	public final static int INDEX_TIPO = 0;
-	//Para a lista de contatos.
+	/** Index do IP para a lista de contatos.*/  
 	public final static int INDEX_IP = 0;
-	//Para ambos.
+	/** Index do ID para pacote recebido/enviado ou lista de contato.*/
 	public final static int INDEX_ID = 1;
 	
-	//Tipos de mensagens trocadas entre processos.
+	/**Tipo de pacote trocado entre processos.*/
 	public final static int HELLO = 0;
+	/**Tipo de pacote trocado entre processos.*/
 	public final static int	REQ_RELOGIO = 1;
+	/**Tipo de pacote trocado entre processos.*/
 	public final static int	AJUSTE_RELOGIO = 2;
+	/**Tipo de pacote trocado entre processos.*/
 	public final static int	RECONHECIMENTO = 3;
+	/**Tipo de pacote trocado entre processos.*/
 	public final static int	ELEICAO = 4;
+	/**Tipo de pacote trocado entre processos.*/
 	public final static int	CALC_RTT_MAX = 5;
+	/**Tipo de pacote trocado entre processos.*/
 	public final static int CHAVE_PUB = 6;
 
-	
+	/** Contatos que o processo conhece.*/
 	private ArrayList<String[]> contatos;
 	
-	
+	/** IP do computador.*/
 	private String IP;
+	/** ID do processo.*/
 	private int ID;
 	
-	// Duracao de reconhecimento de PC's = 10s
+	/** Tempo de duração em milisegundos do reconhecimento entre processos.*/
 	private final long tempoReconhecimento = 10000;
 	
+	/** Comunicação Unicast (UDP)*/
 	private Unicast uc;
+	/** Comunicação Multicast (UDP)*/
 	private Multicast mc;
 	
 	/** 
@@ -149,7 +160,7 @@ public class Comunicacao {
 					//System.out.println(contato[INDEX_IP] + " "+ contato[INDEX_MSG]);
 					mc.enviaMsg(protMsg(RECONHECIMENTO,ID));
 					t1 = System.currentTimeMillis();
-			   }
+				}
 				
 			}
 			
