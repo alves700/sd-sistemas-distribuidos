@@ -182,13 +182,9 @@ public class Processo extends Thread{
          Process p = Runtime.getRuntime().exec(command);
          BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
          String s = stdInput.readLine();
-         if(s.charAt(12)==' '){
-        	 s = (String) s.subSequence(13, s.length());
-         }
-         else{
-        	 s = (String) s.subSequence(12, s.length());
-         }
          
+         int i = s.indexOf(":");
+         s = s.substring(i+2);
          return s;
         
 	}
