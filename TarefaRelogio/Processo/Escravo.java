@@ -27,18 +27,23 @@ import Comunicação.Comunicacao;
 
 public class Escravo extends Processo{
 	
-	//chavesDeCriptografia public do mestre
+	/** Chave de criptografia pública do mestre.*/
 	private Key chavePublicaMestre;
-	
-	//Variáveis de Eleicao.
-	private final long tempoEleicao = 5000; // tempo da eleição demora 5 s
-	private long tempoInicioEleicao = Long.MIN_VALUE; //Armazena o tempo em que a eleição é iniciada 
+	//Variáveis de Eleição
+	/** Tempo de duração em que ocorre uma eleição.*/
+	private final long tempoEleicao = 5000;
+	/** Tempo em que uma eleição foi iniciada.*/
+	private long tempoInicioEleicao = Long.MIN_VALUE;
+	/** Verifica o status da eleição.*/
 	private boolean eleicaoOcorrendo = false;
 	
 	//Variáveis do Hello.
-	private final long tempoEsperaHello = 3000; // tempo de espera máximo aguardado pelo Hello do mestre.
-	private long ultimoHelloRecebido; //Armazena o tempo em que o ultimo hello foi recebido.
+	/** Tempo máximo aguardado por um Hello do mestre.*/
+	private final long tempoEsperaHello = 3000; // 
+	/** Tempo em que o último hello foi recebido.*/
+	private long ultimoHelloRecebido; 
 	
+	/** Armazena o ID do novo Mestre que está sendo eleito.*/
 	private int idNovoMestre = -1;
 	
 	
@@ -233,9 +238,8 @@ public class Escravo extends Processo{
 		uc.enviaMsg(ipMestre, +idMestre, comm.protMsg(Comunicacao.REQ_RELOGIO, ID, ""+convertHoursMillis(getHorario())));
 	}
 	/** 
-	Faz a descriptografia de uma mensagem através de uma chave.
+	Faz a descriptografia de uma mensagem.
 	@param msg - mensagem encriptografada.
-	@param chave - chave de descriptografia.
 	@return mensagem original.
 	*/
 	public String descriptografa(String msg){
@@ -245,7 +249,7 @@ public class Escravo extends Processo{
 			cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, chavePublicaMestre);
 			plainText = cipher.doFinal(msg.getBytes("ISO-8859-1"));
-		   // System.out.println("plain: " + new String(plainText));
+		    //System.out.println("plain: " + new String(plainText));
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
