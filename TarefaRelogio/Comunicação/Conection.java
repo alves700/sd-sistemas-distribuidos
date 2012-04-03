@@ -15,11 +15,15 @@ Classe que possui métodos e atributos que tanto a classe MultiCast e Unicast pos
 */  
 public abstract class Conection  extends Thread{
 	
+	/** Socket da conexão.*/
 	protected DatagramSocket socket;
+	/** Objeto que contém o endereço da conexão.*/
     protected InetAddress address;
+    /** Buffer de entrada da comunicação.*/
     protected ArrayList<DatagramPacket> inBuffer;
+    /** Identifica o status da conexão.*/
     protected boolean isConnected;
-	protected final int tamByte = 1000;
+    /** Porta em que a conexão está sendo feita.*/
 	protected int port;
 	
 	
