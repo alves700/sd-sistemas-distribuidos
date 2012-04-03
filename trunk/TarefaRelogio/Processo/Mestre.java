@@ -44,7 +44,7 @@ public class Mestre extends Processo{
 	
 	//Variáveis de Hello.
 	/** Período em que mestre envia hello para escravos.*/
-	private final long tempoEnvioHello = 1000;
+	private final long tempoEnvioHello = 500;
 	/** Tempo em que o ultimo hello foi enviado.*/
 	private long ultimoHelloEnviado;
 	
@@ -290,6 +290,7 @@ public class Mestre extends Processo{
 			
 			requerindoRTT = false;
 			RTTMax = calculaRTTmax();
+			RTTMax += RTTMax*0.1;
 			System.out.println("RTTMaximo Calculado: "+RTTMax+" Num de processos que participaram: "+RTT.size());
 			
 			RTT.clear();
@@ -305,7 +306,9 @@ public class Mestre extends Processo{
 		String[] msg = mc.getMsg(dp).split(" ");
 		 
 		switch( Integer.parseInt(msg[Comunicacao.INDEX_TIPO]) ){
-
+			case Comunicacao.ELEICAO:
+				System.exit(0);
+			break;
 			case Comunicacao.REQ_RELOGIO:
 				addRelogio(dp, msg);
 				break;
