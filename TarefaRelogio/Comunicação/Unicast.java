@@ -13,6 +13,7 @@ Classe responsável pela comunicação Unicast UDP.
 */
 public class Unicast extends Conection{
 	
+	/** Porta base, serve como base para a porta onde a conexão está sendo feita (Porta = PortaBase + ID do processo).*/
 	public final static int basePort = 5001;
 	
 	/** 
