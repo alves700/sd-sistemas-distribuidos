@@ -198,7 +198,7 @@ public class Escravo extends Processo{
 		int j = msgString.indexOf(" ", 2);
 		String auxMsg[] = descriptografa(msgString.substring(j+1)).split(" "); // descripografa e separa o ID da msg
 		
-		System.out.println("Debug:" + auxMsg[0] + " " + auxMsg[1]);
+		//System.out.println("Debug:" + auxMsg[0] + " " + auxMsg[1]);
 		if ( Integer.parseInt(auxMsg[0]) == idMestre && Long.parseLong(auxMsg[1]) > ultimoSegmento ){ //verifica se o ID está correto. Teste para ver se a descritografica ocorreu certo
 			ultimoSegmento = Long.parseLong(auxMsg[1]);
 			return true; // ajuda o relógio; Unico pacote onde a msg está no index 1
