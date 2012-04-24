@@ -1,4 +1,4 @@
-package tarefaRMI;
+package TarefaRMI;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

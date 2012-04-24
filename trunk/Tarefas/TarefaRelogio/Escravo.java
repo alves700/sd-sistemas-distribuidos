@@ -1,4 +1,4 @@
-package Processo;
+package TarefaRelogio;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,7 +24,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.text.Segment;
 
-import Comunicação.Comunicacao;
+
 
 public class Escravo extends Processo{
 	

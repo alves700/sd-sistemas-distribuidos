@@ -1,4 +1,4 @@
-package Testes;
+package TarefaRelogio;
 
 import java.sql.Time;
 import java.util.Calendar;

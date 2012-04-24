@@ -1,4 +1,4 @@
-package Processo;
+package TarefaRelogio;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -21,7 +21,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import Comunicação.Comunicacao;
+
 /** 
 Classe responsável pelo ajuste do relógio entre processos.
 */

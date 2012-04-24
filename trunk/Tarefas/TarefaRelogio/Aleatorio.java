@@ -1,4 +1,4 @@
-package Testes;
+package TarefaRelogio;
 
 public class Aleatorio {
 	public static void main(String [] args){

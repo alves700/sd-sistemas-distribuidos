@@ -1,4 +1,4 @@
-package Comunicação;
+package TarefaRelogio;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
