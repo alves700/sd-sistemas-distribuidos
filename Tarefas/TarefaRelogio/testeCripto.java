@@ -1,4 +1,4 @@
-package Testes;
+package TarefaRelogio;
 
 import java.math.BigInteger;
 import java.security.Key;
@@ -19,7 +19,7 @@ import java.security.spec.RSAPublicKeySpec;
 
 import javax.crypto.Cipher;
 
-import Comunicação.Comunicacao;
+
 
 public class testeCripto {
 	public static void main(String[] args) throws Exception {

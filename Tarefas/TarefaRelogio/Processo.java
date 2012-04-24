@@ -1,4 +1,4 @@
-package Processo;
+package TarefaRelogio;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 
 import javax.crypto.Cipher;
-
-import Comunicação.*;
 
 /** 
 Classe que possui o main, e além disso possui métodos do Processo. O processo é responsável pelo inicio de comunicações, 
@@ -142,6 +140,7 @@ public class Processo extends Thread{
 	@return o horário em millisegundos.
 	*/
 	public long convertHoursMillis(String horario){
+		 horario = horario.replace('.', ',');
 		 String [] c = horario.split(":");
 		 
          long mills = Long.parseLong(c[0])*60*60*1000; //Horas convertidos em millis
@@ -182,9 +181,9 @@ public class Processo extends Thread{
          Process p = Runtime.getRuntime().exec(command);
          BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
          String s = stdInput.readLine();
-         
          int i = s.indexOf(":");
          s = s.substring(i+2);
+         s = s.replace('.', ',');
          return s;
         
 	}
@@ -193,6 +192,7 @@ public class Processo extends Thread{
 	@param horario String que possui o formato hh:mm:ss,xx onde xx indica centésimos de segundo.
 	*/
 	public void setHorario(String horario) throws IOException{
+		horario = horario.replace(',', '.');
 		String[] command =  new String[3];
         command[0] = "cmd";
         command[1] = "/C";
