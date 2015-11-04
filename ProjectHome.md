@@ -1,0 +1,1 @@
+Repositório para projetos e tarefas de Sistemas Distribuídos do Curso de Engenharia de Computação da Universidade Tecnológica Federal do Paraná.
